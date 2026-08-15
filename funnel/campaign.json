@@ -1,0 +1,38 @@
+{
+  "name": "AI PRO — 25-avgust oqimi",
+  "manager": "@aiprokurs",
+  "manager_repeat": 3,
+  "start_date": "2026-08-25",
+  "price_policy": "NEVER_MENTION",
+  "channels": [
+    { "title": "10-11-12 AVGUST", "id": -1004470492324 },
+    { "title": "23-24 IYUL — Amerika YouTube", "id": -1004486131838 },
+    { "title": "18-19 IYUN", "id": -1003952271811 },
+    { "title": "2-3 IYUL", "id": -1004402719676 }
+  ],
+  "modules": [
+    {
+      "name": "Sun'iy intellekt",
+      "points": ["AI nima va qanday ishlaydi", "To'g'ri rasm yaratish sirlari",
+                 "Neyro-fotosessiya", "Multfilm yasash", "Video roliklar",
+                 "Vayb-kodlash: sayt, mobil ilova, bot"]
+    },
+    {
+      "name": "Amerika YouTube",
+      "points": ["Amerikaliklar YouTube'dan qanday daromad qilishi",
+                 "Noldan boshlab kanal yuritish"]
+    },
+    {
+      "name": "Marketing",
+      "points": ["Yasagan narsangizni qanday sotish", "Mijoz topish"]
+    }
+  ],
+  "guarantee": "",
+  "seats_left": "",
+  "student_results": [],
+  "slots": {
+    "10": "fact",
+    "16": "value",
+    "20": "closing"
+  }
+}

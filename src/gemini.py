@@ -79,9 +79,15 @@ class Gemini:
         raise RuntimeError(f"Gemini JSON qaytarmadi ({tries} urinish): {err}")
 
     # ---------- rasm ----------
-    def image(self, model: str, prompt: str) -> bytes:
+    def image(self, model: str, prompt: str, refs=None) -> bytes:
+        """refs — namuna rasmlar (bytes ro'yxati). Personaj o'xshashligi uchun."""
+        parts = []
+        for r in (refs or []):
+            parts.append({"inlineData": {"mimeType": "image/png",
+                                         "data": base64.b64encode(r).decode()}})
+        parts.append({"text": prompt})
         body = {
-            "contents": [{"role": "user", "parts": [{"text": prompt}]}],
+            "contents": [{"role": "user", "parts": parts}],
             "generationConfig": {"responseModalities": ["IMAGE"]},
         }
         data = self._post(model, body)

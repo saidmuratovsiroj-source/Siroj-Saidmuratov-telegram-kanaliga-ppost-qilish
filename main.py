@@ -34,7 +34,7 @@ def preflight(tg: Telegram):
 def build_post(gem, archive, level, feedback=""):
     """Mavzu -> post -> QC. Sifat nazoratidan o'tguncha qayta yozadi."""
     topic = research.find_topic(gem, archive, level)
-    log(f"Mavzu: {topic.get('title')} (ishonch: {topic.get('confidence')})")
+    log(f"Mavzu: {topic.get('title')}")
 
     for attempt in range(1, config.QC_MAX_ATTEMPTS + 1):
         post = writer.write_post(gem, topic, feedback)
@@ -71,6 +71,12 @@ def main():
         if config.IMAGE_MODE == "ai":
             from src import imagegen
             image = imagegen.generate(gem, post.get("image_prompt", ""), card_title)
+        elif config.IMAGE_MODE == "pool":
+            from src import pool, poster
+            image = poster.make_poster(card_title, kicker=config.RUBRIC,
+                                       cta=config.CHANNEL_ID,
+                                       illustration=pool.pick(len(archive.items)),
+                                       seed=len(archive.items))
         else:
             image = cardgen.make_card(card_title, handle=config.CHANNEL_ID,
                                       accent=config.BRAND_ACCENT)

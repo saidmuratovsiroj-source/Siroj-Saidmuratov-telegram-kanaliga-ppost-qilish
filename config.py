@@ -17,8 +17,10 @@ MODEL_QC = os.getenv("MODEL_QC", "gemini-3.1-flash-lite")
 MODEL_IMAGE = os.getenv("MODEL_IMAGE", "gemini-3.1-flash-image")  # faqat IMAGE_MODE=ai bo'lsa
 
 # --- Rasm rejimi ---
-# "card" = brend kartochkasi (bepul, barqaror) | "ai" = Gemini rasm (billing kerak)
-IMAGE_MODE = os.getenv("IMAGE_MODE", "card")
+#   "pool" = tayyor illyustratsiyalar bazasi + plakat tipografikasi (bepul, tavsiya)
+#   "ai"   = Gemini har post uchun yangi rasm yasaydi (billing kerak)
+#   "card" = eski brend kartochkasi (illyustratsiyasiz)
+IMAGE_MODE = os.getenv("IMAGE_MODE", "pool")
 
 # --- Rubrika ---
 RUBRIC = "Claude maslahatlar"
@@ -37,6 +39,19 @@ COLLECTIONS = [
     ("Pro/Max", _HC + "5953830-pro-and-max-plans"),
 ]
 SHORTLIST_SIZE = 40  # modelga nechta sarlavha ko'rsatiladi
+
+# --- Vebinar dajim tizimi ---
+FUNNEL_CAMPAIGN = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                               "funnel", "campaign.json")
+REACTION_GOAL = int(os.getenv("REACTION_GOAL", "100"))
+FUNNEL_TIMEOUT_MIN = int(os.getenv("FUNNEL_TIMEOUT_MIN", "90"))
+
+# Soat -> qaysi tizim ishlaydi (Toshkent vaqti)
+#   7  -> Claude maslahatlar (asosiy kanal)
+#   10 -> vebinar: haqiqiy voqea
+#   16 -> vebinar: kurs qiymati
+#   20 -> vebinar: dajim / trigger
+SCHEDULE = {7: "claude", 10: "fact", 16: "value", 20: "closing"}
 
 # --- Tasdiq ---
 APPROVAL_TIMEOUT_MIN = int(os.getenv("APPROVAL_TIMEOUT_MIN", "120"))

@@ -1,0 +1,16 @@
+# Plakat illyustratsiyalari — Higgsfield (gpt_image_2), sovet plakati uslubi.
+# Bot bularni birinchi ishga tushganda /data ga yuklab oladi va keyin oflayn ishlaydi.
+# Yangi rasm qo'shish: shu yerga manzil qo'shing yoki images/ ga PNG tashlang.
+
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_903387d9-5ec1-432d-9e65-d97fccc39933.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_bfa258a5-a498-4ad4-acd0-874b0e724a4c.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_ca7e59a8-bc9a-452a-ab6f-61c2e91aaddb.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_a305bd16-a325-478d-ae8c-33c50592aa08.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_9f90a47a-4e92-4d2e-8674-2b1fbfc03315.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_831e60b9-3ff0-4c4f-ad5d-ca48602634e9.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_2024ec78-ed24-4a13-b1c0-af794755bdcb.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_8d3ffdf6-cba8-4bc8-98ea-8009cdcc4af9.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_d105dd8a-dfe5-41ba-809e-a805bfd10e67.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_5e3ee38d-d775-4354-b710-66bb6ebca67a.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_3519df8e-59f4-41d2-8e1a-274a2fbc62c7.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_6d397491-6dd4-491e-a090-f746631c118e.png

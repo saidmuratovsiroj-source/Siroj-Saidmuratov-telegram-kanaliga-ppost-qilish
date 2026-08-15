@@ -1,0 +1,21 @@
+[
+  {
+    "id": "dimeadozen",
+    "used": true,
+    "headline": "$185 dan boshlab, 7 oyda $150 000 ga sotishdi",
+    "facts": [
+      "Monika Powers va Sal Ayello — ikki do'st, 2023-yil mart oyida DimeADozen.AI xizmatini ochishdi",
+      "Xizmat: odam biznes g'oyasini yozadi, sun'iy intellekt 50 betlik tahlil tayyorlaydi",
+      "Bitta hisobot narxi $39, boshlash uchun sarflagani $185",
+      "7 oyda 40 000 dan ortiq hisobot yasalgan, $66 000 daromad",
+      "Loyihani $150 000 ga sotishdi",
+      "Monika dasturchi emas — dizayner"
+    ],
+    "lesson": "AI'dan pul ishlash uchun daho bo'lish shart emas. Kimningdir muammosini yechish kerak.",
+    "source": "CNBC / Tech Startups",
+    "source_url": "https://www.cnbc.com/2023/10/16/how-inexpensive-ai-side-hustle-dimeadozen-sold-for-thousands.html",
+    "image_big": "$150 000",
+    "image_small": "$185 DAN",
+    "image_note": "7 OYDA"
+  }
+]

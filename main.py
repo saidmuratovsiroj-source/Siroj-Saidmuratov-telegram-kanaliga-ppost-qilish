@@ -1,7 +1,10 @@
-"""AiPro — Claude maslahatlar rubrikasi uchun avtomatik post generatori.
+"""Asosiy kanal (@Siroj_aiPro_Academy) uchun post generatori.
 
-Oqim: mavzu izlash -> yozish -> sifat nazorati -> rasm -> tasdiq -> kanalga chiqarish.
-Railway'da cron xizmati sifatida kuniga bir marta ishga tushadi.
+Oqim: mavzu (yangilik / maslahat / kurs) -> yozish -> rasm -> tasdiq -> kanal.
+
+Mavzu turi `funnel/main_channel.json` dagi navbat bilan aniqlanadi:
+  6 ta yangilik -> 1 ta amaliy maslahat -> 1 ta kurs taklifi -> boshidan.
+Har 3-postda jamoaga yumshoq chorlov qo'shiladi.
 """
 import sys
 import traceback
@@ -11,44 +14,34 @@ import config
 from src.telegram import Telegram
 from src.gemini import Gemini
 from src.archive import Archive
-from src import research, writer, qc, cardgen
+from src import hype, poster, pool, voice
 
 BTN = [[{"text": "✅ Chiqsin", "callback_data": "post:publish"},
         {"text": "🔄 Qayta yoz", "callback_data": "post:rewrite"},
         {"text": "❌ Bekor", "callback_data": "post:cancel"}]]
+
+KIND_UZ = {"news": "yangilik", "tool": "amaliy maslahat", "offer": "kurs taklifi"}
 
 
 def log(msg):
     print(f"[{datetime.now(config.TZ).strftime('%H:%M:%S')}] {msg}", flush=True)
 
 
-def preflight(tg: Telegram):
-    me = tg.me()
-    log(f"Bot: @{me['username']}")
-    if not tg.can_post(config.CHANNEL_ID):
-        raise SystemExit(f"XATO: bot {config.CHANNEL_ID} kanalida admin emas yoki "
-                         f"'post messages' huquqi yo'q.")
-    log(f"Kanal tekshirildi: {config.CHANNEL_ID}")
-
-
-def build_post(gem, archive, level, feedback=""):
-    """Mavzu -> post -> QC. Sifat nazoratidan o'tguncha qayta yozadi."""
-    topic = research.find_topic(gem, archive, level)
-    log(f"Mavzu: {topic.get('title')}")
-
-    for attempt in range(1, config.QC_MAX_ATTEMPTS + 1):
-        post = writer.write_post(gem, topic, feedback)
-        log(f"Post yozildi ({len(post.get('caption',''))} belgi), tekshirilmoqda…")
-        result = qc.check(gem, topic, post)
-        log(f"QC: {result.get('verdict')} ({result.get('score')}/10)")
-        if result.get("verdict") == "pass":
-            return topic, post, result
-        log(f"QC muammolari: {result.get('problems')}")
-        feedback = result.get("fix_instruction") or "; ".join(result.get("problems", []))
-        if attempt == config.QC_MAX_ATTEMPTS:
-            log("QC bir necha marta o'tmadi — baribir tasdiqqa yuboramiz, belgi bilan")
-            return topic, post, result
-    return topic, post, result
+def check(cap: str):
+    """Mexanik tekshiruv — modelning tipik xatolari."""
+    import re
+    if not cap:
+        return "Post bo'sh"
+    if re.search(r"[Ѐ-ӿ]", cap):
+        return "Matnda kirill harflari bor — faqat lotin yozuvida yoz"
+    if len(cap) > config.CAPTION_LIMIT:
+        return f"Uzunlik {len(cap)} > {config.CAPTION_LIMIT} — qisqartir"
+    if re.search(r"\boqim", cap, re.I):
+        return "'oqim' so'zi ishlatilgan — 'yangi guruh' yoki 'o'qish boshlanadi' deb yoz"
+    for w in ("so'm", "narxi", "chegirma"):
+        if w in cap.lower():
+            return "Narx haqida gapirilgan — narxni umuman tilga olma"
+    return None
 
 
 def main():
@@ -56,77 +49,75 @@ def main():
     gem = Gemini(config.GEMINI_API_KEY)
     archive = Archive(config.ARCHIVE_PATH)
 
-    preflight(tg)
+    if not tg.can_post(config.CHANNEL_ID):
+        raise SystemExit(f"XATO: bot {config.CHANNEL_ID} kanalida post yoza olmaydi.")
+    log(f"Kanal tekshirildi: {config.CHANNEL_ID} | arxivda {len(archive.items)} ta post")
     tg.drain()
 
-    level = archive.next_level(config.LEVELS)
-    log(f"Bugungi daraja: {level}")
-
-    feedback = ""
     for round_no in range(1, config.MAX_REWRITES + 1):
-        topic, post, qcr = build_post(gem, archive, level, feedback)
+        post, meta = hype.build(gem, archive)
+        cap = (post.get("caption") or "").strip()
+        log(f"Tur: {meta['kind']} | {len(cap)} belgi")
 
-        log(f"Rasm tayyorlanmoqda ({config.IMAGE_MODE})…")
-        card_title = post.get("image_title") or topic.get("title", "")
-        if config.IMAGE_MODE == "ai":
-            from src import imagegen
-            image = imagegen.generate(gem, post.get("image_prompt", ""), card_title)
-        elif config.IMAGE_MODE == "pool":
-            from src import pool, poster
-            image = poster.make_poster(card_title, kicker=config.RUBRIC,
-                                       cta=config.CHANNEL_ID,
-                                       illustration=pool.pick(len(archive.items)),
-                                       seed=len(archive.items))
-        else:
-            image = cardgen.make_card(card_title, handle=config.CHANNEL_ID,
-                                      accent=config.BRAND_ACCENT)
+        bad = check(cap)
+        if bad:
+            log(f"Mexanik tekshiruv: {bad} — qayta yozamiz")
+            continue
 
-        warn = ""
-        if qcr.get("verdict") != "pass":
-            warn = "⚠️ <b>Sifat nazoratidan to'liq o'tmadi:</b>\n" + \
-                   "\n".join(f"• {p}" for p in qcr.get("problems", [])[:4]) + "\n\n"
+        seed = len(archive.items)
+        image = poster.make_poster(
+            meta.get("image_big") or post.get("image_title") or "AI",
+            kicker=meta.get("kicker", config.RUBRIC),
+            note=meta.get("image_small", ""),
+            cta=config.CHANNEL_ID,
+            illustration=pool.pick(seed),
+            seed=seed)
 
-        header = (f"{warn}<b>Tasdiq kutilmoqda</b> · {level} · QC {qcr.get('score')}/10 "
-                  f"· urinish {round_no}/{config.MAX_REWRITES}\n"
-                  f"Manba: <a href=\"{topic.get('source_url','')}\">"
-                  f"{topic.get('source_title','')}</a>\n"
-                  f"— — — — —\n")
-        tg.send_photo(config.ADMIN_CHAT_ID, image, header + post["caption"], buttons=BTN)
+        head = (f"<i>faqat siz ko'rasiz — kanalga chiqmaydi</i>\n"
+                f"{config.CHANNEL_ID} · {KIND_UZ.get(meta['kind'], meta['kind'])} "
+                f"· urinish {round_no}/{config.MAX_REWRITES}\n")
+        if meta.get("source_url"):
+            head += f"Manba: {meta['source_url']}\n"
+        head += "— — — — —\n"
+
+        tg.send_photo(config.ADMIN_CHAT_ID, image, head + cap, buttons=BTN)
         log(f"Tasdiqqa yuborildi. {config.APPROVAL_TIMEOUT_MIN} daqiqa kutamiz…")
 
-        data, cb_id = tg.wait_for_callback("post:", config.APPROVAL_TIMEOUT_MIN * 60)
-
+        data, cb = tg.wait_for_callback("post:", config.APPROVAL_TIMEOUT_MIN * 60)
         if data is None:
             log("Javob kelmadi — post chiqarilmadi.")
             tg.send_message(config.ADMIN_CHAT_ID,
-                            "⏰ Vaqt tugadi, post chiqarilmadi. Ertaga yangisi keladi.")
+                            "⏰ Vaqt tugadi, post chiqmadi. Keyingi safar yangisi keladi.")
             return
 
         action = data.split(":", 1)[1]
-        tg.answer_callback(cb_id, {"publish": "Chiqarilmoqda…",
-                                   "rewrite": "Qayta yozilmoqda…",
-                                   "cancel": "Bekor qilindi"}.get(action, ""))
+        tg.answer_callback(cb, {"publish": "Chiqarilmoqda…", "rewrite": "Qayta yozilmoqda…",
+                                "cancel": "Bekor qilindi"}.get(action, ""))
+
+        if action == "cancel":
+            log("Bekor qilindi.")
+            tg.send_message(config.ADMIN_CHAT_ID, "❌ Bekor qilindi.")
+            return
 
         if action == "publish":
-            tg.send_photo(config.CHANNEL_ID, image, post["caption"])
-            archive.add(topic.get("title", ""), level,
-                        topic.get("tip", ""), topic.get("source_url", ""))
+            tg.send_photo(config.CHANNEL_ID, image, cap)
+            audio, akind = voice.make(post.get("audio") or "")
+            if audio:
+                try:
+                    tg.send_voice(config.CHANNEL_ID, audio, akind)
+                except Exception as e:
+                    log(f"ovoz yuborilmadi: {e}")
+            archive.add(meta.get("source_title") or (meta.get("image_big") or "post"),
+                        meta["kind"], cap[:160], meta.get("source_url", ""))
             log("Kanalga chiqarildi ✅")
             tg.send_message(config.ADMIN_CHAT_ID, "✅ Post kanalga chiqdi.")
             return
 
-        if action == "cancel":
-            log("Bekor qilindi.")
-            tg.send_message(config.ADMIN_CHAT_ID, "❌ Bekor qilindi, post chiqmadi.")
-            return
-
-        feedback = ("Oldingi variant muallifga yoqmadi. Butunlay boshqa burchakdan, "
-                    "boshqa ilgak va boshqa tuzilma bilan yoz.")
         log("Qayta yozilmoqda…")
 
     tg.send_message(config.ADMIN_CHAT_ID,
-                    f"🔄 {config.MAX_REWRITES} marta qayta yozildi, hech biri tasdiqlanmadi. "
-                    f"Bugun post chiqmadi.")
+                    f"🔄 {config.MAX_REWRITES} marta qayta yozildi, tasdiqlanmadi. "
+                    f"Post chiqmadi.")
 
 
 if __name__ == "__main__":

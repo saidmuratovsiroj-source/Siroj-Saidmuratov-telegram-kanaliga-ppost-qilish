@@ -1,16 +1,13 @@
-# Plakat illyustratsiyalari — Higgsfield (gpt_image_2), sovet plakati uslubi.
-# Bot bularni birinchi ishga tushganda /data ga yuklab oladi va keyin oflayn ishlaydi.
-# Yangi rasm qo'shish: shu yerga manzil qo'shing yoki images/ ga PNG tashlang.
+# Post illyustratsiyalari — toza oq fon + yumshoq 3D personaj (Siroj tanlagan uslub).
+# Personaj pastki qismda, yuqori qismi matn uchun bo'sh oq.
+# MATN YO'Q: sarlavhani poster.py o'zi chizadi (o' va g' toza chiqishi uchun).
+# Bot birinchi ishga tushganda bularni /data ga yuklab oladi va keyin oflayn ishlaydi.
 
-https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_903387d9-5ec1-432d-9e65-d97fccc39933.png
-https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_bfa258a5-a498-4ad4-acd0-874b0e724a4c.png
-https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_ca7e59a8-bc9a-452a-ab6f-61c2e91aaddb.png
-https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_a305bd16-a325-478d-ae8c-33c50592aa08.png
-https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_9f90a47a-4e92-4d2e-8674-2b1fbfc03315.png
-https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_831e60b9-3ff0-4c4f-ad5d-ca48602634e9.png
-https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_2024ec78-ed24-4a13-b1c0-af794755bdcb.png
-https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_8d3ffdf6-cba8-4bc8-98ea-8009cdcc4af9.png
-https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_d105dd8a-dfe5-41ba-809e-a805bfd10e67.png
-https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_5e3ee38d-d775-4354-b710-66bb6ebca67a.png
-https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_3519df8e-59f4-41d2-8e1a-274a2fbc62c7.png
-https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260815_053818_6d397491-6dd4-491e-a090-f746631c118e.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260819_111545_c3dc8510-c953-4bbc-b798-68cc31db0693.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260819_111544_27f547e9-0873-4c36-9282-4b17e67f841a.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260819_111544_682173b2-9fa5-45ea-8ebc-1f7bae848c81.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260819_111544_013b1499-04bb-45ba-a761-e9c7cdf7315f.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260819_111544_f5e94916-395f-4c53-ab26-537a2c988c30.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260819_111543_b67c980b-3a75-4314-b45f-045e5b86b61d.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260819_111544_4afc4654-87cc-4032-b401-f2afaeeeabdb.png
+https://d8j0ntlcm91z4.cloudfront.net/user_35boHoiKUYNusNd5Wih2IMlWHk7/hf_20260819_111543_b262fc1f-0005-4dde-877d-d5bdef2236f3.png

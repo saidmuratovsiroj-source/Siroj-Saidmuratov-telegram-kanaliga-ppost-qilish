@@ -83,12 +83,28 @@ def find_topic(gem, archive, level: str) -> dict:
                                        listing=listing),
                     system=PICK_SYSTEM, temperature=1.0)
     idx = int(pick.get("index", 0))
-    chosen = shortlist[idx if 0 <= idx < len(shortlist) else 0]
-    print(f"[research] tanlandi: {chosen['title']} — {pick.get('reason','')}")
+    if not (0 <= idx < len(shortlist)):
+        idx = 0
+    print(f"[research] tanlandi: {shortlist[idx]['title']} — {pick.get('reason','')}")
 
-    text = sources.fetch_article(chosen["url"])
-    if len(text) < 200:
-        raise RuntimeError(f"Maqola matni juda qisqa: {chosen['url']}")
+    # Ba'zi maqolalarning matni bo'sh chiqadi (sahifa JS bilan yuklanadi).
+    # Shunday bo'lsa to'xtamaymiz — navbatdagi maqolaga o'tamiz.
+    order = [shortlist[idx]] + [a for i, a in enumerate(shortlist) if i != idx]
+    chosen, text = None, ""
+    for cand in order[:12]:
+        try:
+            t = sources.fetch_article(cand["url"])
+        except Exception as e:
+            print(f"[research] o'qib bo'lmadi ({cand['title'][:40]}): {e}")
+            continue
+        if len(t) >= 400:
+            chosen, text = cand, t
+            break
+        print(f"[research] matni qisqa ({len(t)} belgi), keyingisiga o'tamiz: {cand['title'][:45]}")
+    if not chosen:
+        raise RuntimeError("Hech qaysi maqoladan yetarli matn olinmadi")
+    if chosen is not shortlist[idx]:
+        print(f"[research] yakuniy tanlov: {chosen['title']}")
 
     topic = gem.json(config.MODEL_RESEARCH,
                      EXTRACT_PROMPT.format(title=chosen["title"], url=chosen["url"], text=text),

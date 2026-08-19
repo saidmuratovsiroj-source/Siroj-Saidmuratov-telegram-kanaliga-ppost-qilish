@@ -15,7 +15,8 @@ import config
 
 SOURCES = os.path.join(config.BASE_DIR, "images", "sources.txt")
 LOCAL_DIR = os.path.join(config.BASE_DIR, "images")
-CACHE_DIR = os.path.join(config.DATA_DIR, "images")
+# v2 — 3D personaj uslubi. Eski (sovet plakati) keshi ishlatilmasin.
+CACHE_DIR = os.path.join(config.DATA_DIR, "images_v3")
 HEADERS = {"User-Agent": "Mozilla/5.0 (compatible; AiProBot/1.0)"}
 
 

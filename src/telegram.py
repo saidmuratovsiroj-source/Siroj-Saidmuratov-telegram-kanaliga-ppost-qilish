@@ -46,6 +46,19 @@ class Telegram:
         files = {"photo": ("post.png", image_bytes, "image/png")}
         return self._call("sendPhoto", data=payload, files=files)
 
+    def send_voice(self, chat_id, data, kind="voice", caption=None):
+        """kind: 'voice' (OGG/Opus) yoki 'audio' (MP3)."""
+        payload = {"chat_id": chat_id}
+        if caption:
+            payload["caption"] = caption
+            payload["parse_mode"] = "HTML"
+        if kind == "voice":
+            files = {"voice": ("post.ogg", data, "audio/ogg")}
+            return self._call("sendVoice", data=payload, files=files)
+        payload["title"] = "Post"
+        files = {"audio": ("post.mp3", data, "audio/mpeg")}
+        return self._call("sendAudio", data=payload, files=files)
+
     def edit_caption(self, chat_id, message_id, caption, parse_mode="HTML"):
         return self._call("editMessageCaption", json={
             "chat_id": chat_id, "message_id": message_id,

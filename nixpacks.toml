@@ -1,0 +1,3 @@
+# ffmpeg — ElevenLabs MP3 ni Telegram ovozli xabari (OGG/Opus) ga aylantirish uchun
+[phases.setup]
+nixPkgs = ["...", "ffmpeg"]

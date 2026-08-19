@@ -1,0 +1,56 @@
+{
+  "channel": "@Siroj_aiPro_Academy",
+  "manager": "@aiprokurs",
+  "core_message": "Sun'iy intellektni o'rganish uchun ayni vaqti. Hali kech emas — bugun noldan boshlash mumkin.",
+  "rotation": [
+    "news",
+    "news",
+    "news",
+    "news",
+    "news",
+    "news",
+    "tool",
+    "offer"
+  ],
+  "invite_every": 3,
+  "courses": [
+    {
+      "name": "Video yaratish",
+      "for": "AI bilan video rolik, multfilm va reklama yasashni xohlaganlar",
+      "points": [
+        "Neyro-fotosessiya",
+        "Realistik video roliklar",
+        "Multfilm"
+      ]
+    },
+    {
+      "name": "Audio va musiqa",
+      "for": "AI bilan ovoz, qo'shiq va musiqa yasashni xohlaganlar",
+      "points": [
+        "Sun'iy ovoz",
+        "Musiqa yaratish",
+        "Dublyaj"
+      ]
+    },
+    {
+      "name": "Vayb-kodlash",
+      "for": "Kod yozmasdan sayt, ilova va bot yasashni xohlaganlar",
+      "points": [
+        "Sayt",
+        "Mobil ilova",
+        "Telegram bot"
+      ]
+    },
+    {
+      "name": "Amerika YouTube",
+      "for": "AQSh YouTube'idan daromad qilishni xohlaganlar",
+      "points": [
+        "Noldan kanal",
+        "Kontent",
+        "Monetizatsiya"
+      ]
+    }
+  ],
+  "posts_per_day": 1,
+  "posts_per_day_note": "Kuniga 1 ta. Ba'zan 2 ta bo'lishi mumkin — ikkinchisi qo'lda so'ralganda chiqariladi."
+}

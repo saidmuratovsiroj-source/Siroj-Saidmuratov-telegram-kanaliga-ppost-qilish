@@ -1,9 +1,9 @@
-"""AI illyustratsiya + retro plakat tipografikasi.
+"""AI illyustratsiya + yorqin 3D tipografika.
 
 IMAGE_MODE=ai bo'lganda:
-  1. Gemini plakat uslubidagi illyustratsiya yasaydi (MATNSIZ)
+  1. Gemini 3D uslubdagi illyustratsiya yasaydi (MATNSIZ)
   2. brand/character.png berilsa — personaj Sirojga o'xshatiladi
-  3. Ustiga poster.py tipografikasi qo'yiladi (sarlavha, qizil lenta)
+  3. Ustiga poster.py tipografikasi qo'yiladi (nishoncha, sarlavha, kartochka)
 
 Matnni AI emas, biz chizamiz — o'zbekcha o' va g' har doim toza chiqadi.
 Agar rasm generatsiyasi ishlamasa (limit, xato) — matn plakati bilan davom etadi.
@@ -15,19 +15,18 @@ from src import poster
 CHARACTER = os.path.join(config.BASE_DIR, "brand", "character.png")
 
 STYLE = (
-    "Vintage propaganda poster illustration, 1950s-1960s printed poster aesthetic. "
-    "Bold heroic composition, low camera angle, confident forward-looking subject. "
-    "Limited palette: aged cream paper, deep brick red, charcoal black. "
-    "Screen-print texture, halftone dots, slight paper grain and print misregistration. "
-    "Subject placed on the RIGHT side of the frame, left third kept simple and open. "
-    "Square 1:1. "
+    "Glossy 3D Pixar-style character illustration, modern animation-film quality. "
+    "Vivid hot-pink / magenta / acid lime-green palette, glossy 3D blobs and bubbles, "
+    "ultra saturated, very high contrast, clean and modern, strong rim light. "
+    "The character stands in the RIGHT half of the frame; the LEFT 45 percent is "
+    "clean empty background reserved for a headline. Square 1:1. "
     "STRICTLY FORBIDDEN: any text, letters, words, numbers, captions, slogans, "
     "logos, brand marks, flags, emblems or insignia of any kind."
 )
 
 CHARACTER_NOTE = (
     "Use the man from the reference photos as the main character. Keep his face, "
-    "hair, beard and build recognisable, drawn in the poster illustration style. "
+    "hair, beard and build recognisable, restyled as an appealing 3D cartoon character. "
 )
 
 

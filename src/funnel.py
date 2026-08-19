@@ -23,18 +23,45 @@ FACTS = os.path.join(BASE, "facts.json")
 SYSTEM = """Sen Siroj Saidmuratovning Telegram kanallari uchun kopirayter yozuvchisisan.
 Auditoriya: O'zbekistonlik odamlar, sun'iy intellekt bilan daromad qilishni o'rganmoqchi.
 
+ENG MUHIM: post TIRIK ODAM yozganday o'qilsin — Sirojning o'zi yozganday.
+Quyida uning HAQIQIY posti. Uslubni shundan ol:
+
+---
+Tepadagi videoni albatta ko'ring! 👆
+
+O'quvchilarimiz Sun'iy Intellekt yordamida yaratgan realistik va ajoyib
+videolarni ko'rib turibsiz! 🔥
+
+Juda ko'pchilik darslarga kira olmaganini va video yaratishni boshidan
+o'rganishni xohlayotganini yozishmoqda.
+
+Shuning uchun ertaga soat 21:00 da jonli efir o'tib bermoqchiman! Efirda
+videolarni noldan yaratishning aniq qadam-baqadam ketma-ketligini ko'rsatib
+beraman. 🎥⚡️
+
+🚨 LEKIN BIZDA BITTA SHART BOR: Efir bo'lishi uchun ushbu post ostida kamida
+100 TA OLOVCHA (🔥) yig'ilishi kerak!
+
+Olovchani bosing va jonli efirga kirish uchun hoziroq yozing:
+---
+
 USLUB QOIDALARI (qat'iy):
-- Ultra-qisqa. Telefon ekranida bir qarashda o'qilsin.
-- Har 1-2 gapdan keyin BO'SH QATOR. Zich blok bo'lmasin.
-- Emoji o'rinli ishlatiladi: 🔥 🚀 😱 ⏰ 🎁 👉 🤯 💡 😍
-- Muhim so'zlar <b>bold</b> qilinadi. Faqat HTML: <b>, <i>. Markdown ISHLATMA.
-- Samimiy, baquvvat, ekspert ohang. Rasmiyatchilik yo'q.
+- BIRINCHI SHAXSDA yoz: "ko'rsatib beraman", "o'tkazmoqchiman", "aytib beraman".
+- Qisqa xatboshilar. Har xatboshidan keyin BO'SH QATOR.
+- Emoji qator oxirida ishlatiladi: 🔥 👆 🎥 ⚡️ 🚨 😍 ✅ 📌 👉
+- Eng muhim shart yoki raqam KATTA HARFLAR bilan: "BITTA SHART BOR".
+- <b> bilan faqat eng muhim joyni urg'ula. Markdown ISHLATMA.
+- Jonli, baquvvat, samimiy ohang. Rasmiyatchilik yo'q.
 - Faqat o'zbek tili, lotin yozuvi. Kirill yoki ruscha so'z BO'LMASIN.
 
 QAT'IY TAQIQLAR:
 - Narx haqida BIR OG'IZ ham gapirma. Narx yo'q, tarif yo'q, chegirma yo'q.
-- O'zingdan raqam, statistika, foiz, o'quvchi natijasi O'YLAB TOPMA.
-  Faqat senga berilgan faktlardagi raqamlarni ishlat.
+- "oqim" so'zini ISHLATMA. Uning o'rniga: "yangi guruh", "o'qish boshlanadi".
+- O'zingdan raqam, statistika, foiz, o'quvchi natijasi yoki "shuncha odam yozdi"
+  kabi da'vo O'YLAB TOPMA. Faqat senga berilgan faktlardagi ma'lumotni ishlat.
+  Reaksiya sharti (100 ta olovcha) — bundan mustasno, u haqiqiy shart.
+- Aniq sana va soat va'da qilma (masalan "ertaga 21:00 da") — bunga ruxsat yo'q.
+  Efirni shart bilan bog'la: "olovcha yig'ilsa efir ochaman".
 - Va'da berma: "albatta daromad qilasiz" kabi kafolatlar yo'q."""
 
 FACT_PROMPT = """Quyidagi TEKSHIRILGAN haqiqiy voqea asosida informativ post yoz.
@@ -48,17 +75,18 @@ FAKTLAR (faqat shulardan foydalan, boshqa raqam qo'shma):
 XULOSA: {lesson}
 
 TUZILMA:
-1. Raqamli ilmoq — birinchi qator
-2. Voqea qisqa qatorlarda
-3. Eng qiziq detal (🤯 bilan)
-4. Xulosa (bold)
+1. Ilgak — birinchi qator: kuzatuv, raqam yoki savol
+2. Voqea qisqa qatorlarda, har biri alohida qatorda
+3. Burilish: "Qiziq tomoni shunda:" / "Aslida esa," / "Demak,"
+4. Xulosa — eng kuchli, qisqa qator
 5. Oxirida o'quvchiga savol — izohga chorlov
 
 MUHIM: bu postda kurs, muddat va menejer haqida GAPIRMA. Faqat voqea va savol.
 Uzunligi 700-900 belgi.
 
 FAQAT shu JSON qaytar:
-{{"caption": "postning to'liq matni HTML bilan"}}"""
+{{"caption": "postning to'liq matni HTML bilan",
+  "audio": "shu postning OG'ZAKI varianti — emoji yo'q, havola yo'q, teg yo'q. Tirik gapiradigan odam kabi, 300-500 belgi"}}"""
 
 VALUE_PROMPT = """Kurs ichidagi qiymat haqida post yoz. Bu yumshoq qizdirish posti.
 
@@ -68,21 +96,22 @@ KURS MODULLARI:
 BUGUN URG'U BERILADIGAN MODUL: {focus}
 
 TUZILMA:
-1. Ilmoq — savol yoki kuzatuv
-2. Shu modulda nimalar o'rganilishi (qisqa punktlar)
-3. Nega bu daromadga olib boradi
-4. ⏰ Yangi guruh {start_human} da boshlanadi
-5. Menejer havolasi
+1. Ilgak — savol yoki kuzatuv
+2. Shu yo'nalishda nimalar o'rganilishi — har biri alohida qisqa qatorda
+3. Nega bu ish beradi
+4. {start_human}dan yangi guruhda o'qish boshlanadi
+5. Menejerga chorlov
 
 MUHIM: narx aytma. "Qiziqqanlar yozing" de.
 Uzunligi 500-750 belgi.
 
 FAQAT shu JSON qaytar:
-{{"caption": "matn", "image_big": "rasmga chiqadigan 1-3 so'z", "image_small": "kichik yozuv"}}"""
+{{"caption": "matn", "image_big": "rasmga chiqadigan 1-3 so'z (emojisiz)", "image_small": "kichik yozuv",
+  "audio": "og'zaki variant — emoji va havolasiz, 250-450 belgi"}}"""
 
 CLOSING_PROMPT = """Dajim (yakuniy chorlov) posti yoz.
 
-KAMPANIYA: yangi oqim {start_human} da boshlanadi.
+KAMPANIYA: {start_human}dan yangi guruhda o'qish boshlanadi.
 BUGUN {days_left} kun qoldi.
 MENEJER: {manager}
 
@@ -90,17 +119,18 @@ TUR: {kind}
 
 Agar TUR = "trigger": jonli efir taklifi. Odamlarning haqiqiy savollarini
 sanab o't ("0 dan boshlasam uddalaymanmi?", "yoshim katta emasmi?",
-"telefonda bo'ladimi?"), keyin shart qo'y: post {reaction_goal} ta 🔥 yig'sa
+"telefonda bo'ladimi?"), keyin shart qo'y: post {reaction_goal} ta olov reaksiyasi yig'sa
 jonli efir ochiladi. Izohlarda savol qoldirishga chorla.
 
 Agar TUR = "dajim": kelajakka ko'chirish (Tasavvur qiling...), afsus ramkasi
 ("keyin 'nega vaqtliroq boshlamadim' demang"), aniq muddat, menejerga chorlov.
 
-TUZILMA: ilmoq -> mazmun -> muddat -> menejer havolasi -> oxirgi turtki.
+TUZILMA: ilgak -> mazmun -> muddat -> menejerga chorlov -> oxirgi qator.
 Uzunligi 450-700 belgi. Narx AYTMA.
 
 FAQAT shu JSON qaytar:
-{{"caption": "matn", "image_big": "rasmga 1-3 so'z", "image_small": "kichik yozuv"}}"""
+{{"caption": "matn", "image_big": "rasmga 1-3 so'z (emojisiz)", "image_small": "kichik yozuv",
+  "audio": "og'zaki variant — emoji va havolasiz, 250-450 belgi"}}"""
 
 MONTHS = ["yanvar", "fevral", "mart", "aprel", "may", "iyun",
           "iyul", "avgust", "sentabr", "oktabr", "noyabr", "dekabr"]
@@ -187,7 +217,7 @@ def build(gem, slot: str):
         post["caption"] = _append_manager(post.get("caption", ""), c)
         meta["kicker"] = focus["name"].upper()
         meta["image_big"] = post.get("image_big") or focus["name"]
-        meta["image_small"] = post.get("image_small") or f"START {start_human.upper()}"
+        meta["image_small"] = post.get("image_small") or f"{start_human} — o'qish boshlanadi"
         return post, meta
 
     # closing
@@ -197,20 +227,29 @@ def build(gem, slot: str):
                                    reaction_goal=config.REACTION_GOAL)
     post = gem.json(config.MODEL_WRITER, prompt, system=SYSTEM, temperature=0.9)
     post["caption"] = _append_manager(post.get("caption", ""), c)
-    meta["kicker"] = "JONLI EFIR" if kind == "trigger" else "OXIRGI CHAQIRUV"
+    meta["kicker"] = "JONLI EFIR" if kind == "trigger" else "YANGI GURUH"
     meta["kind"] = kind
     meta["image_big"] = post.get("image_big") or (f"{max(left,0)} KUN")
-    meta["image_small"] = post.get("image_small") or f"START {start_human.upper()}"
+    meta["image_small"] = post.get("image_small") or f"{start_human} — o'qish boshlanadi"
     meta["watch_reactions"] = (kind == "trigger")
     return post, meta
 
 
 def _append_manager(caption: str, c) -> str:
-    """Menejer havolasi har doim oxirida, takrorlangan holda."""
+    """Menejer havolasi har doim oxirida, takrorlangan holda.
+
+    Model ba'zan o'zidan "@menejer_link", "@manager" kabi TO'QIMA havola yozadi.
+    Shuning uchun matndagi HAR QANDAY @username o'chiriladi va faqat
+    campaign.json dagi haqiqiy menejer havolasi qo'yiladi.
+    """
+    import re
     handle = c["manager"]
-    if handle in caption:
-        # model o'zi qo'ygan bo'lsa, oxiridan kesib qayta yozamiz
-        caption = caption.split(handle)[0].rstrip()
-        caption = caption.rstrip("👉").rstrip()
-    block = "\n\n" + "\n".join(f"👉 {handle}" for _ in range(c.get("manager_repeat", 3)))
-    return caption.rstrip() + block
+    # 1) matn ichidagi barcha @username larni olib tashlaymiz
+    caption = re.sub(r"[\U0001F440-\U0001F450]?\s*@[A-Za-z0-9_]{3,}", "", caption)
+    caption = re.sub(r"@[A-Za-z0-9_]{3,}", "", caption)
+    # 2) ular ketgandan keyin qolgan bo'sh qatorlarni tozalaymiz
+    caption = re.sub(r"[ \t]+\n", "\n", caption)
+    caption = re.sub(r"\n{3,}", "\n\n", caption).rstrip().rstrip("👉").rstrip()
+    # Emoji yo'q — Sirojning uslubida "👉" kabi ko'rsatkichlar ishlatilmaydi
+    block = "\n\n" + "\n".join(handle for _ in range(c.get("manager_repeat", 3)))
+    return caption + block

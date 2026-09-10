@@ -24,7 +24,7 @@ from datetime import date, datetime
 import config
 from src.telegram import Telegram
 from src.gemini import Gemini
-from src import funnel, poster, pool, queue, reactions, voice
+from src import funnel, history, poster, pool, queue, reactions, voice
 
 BTN = [[{"text": "✅ Chiqsin", "callback_data": "post:publish"},
         {"text": "🔄 Qayta yoz", "callback_data": "post:rewrite"},
@@ -137,6 +137,16 @@ def run_funnel(tg, gem, slot, mode="now"):
             log(f"Mexanik tekshiruv: {bad} — qayta yozamiz")
             continue
 
+        sim = history.similarity(cap)
+        if sim >= config.SIMILARITY_LIMIT and attempt < config.MAX_REWRITES:
+            log(f"Oldingi postga juda o'xshash ({sim:.0%}) — qayta yozamiz")
+            continue
+        same_hook = history.opening_repeats(cap)
+        if same_hook and attempt < config.MAX_REWRITES:
+            log(f"{same_hook} — qayta yozamiz")
+            continue
+        log(f"Oldingi postlarga o'xshashlik: {sim:.0%}")
+
         image = _make_image(cap, meta, c["manager"])
 
         # Bu sarlavha FAQAT Sirojning shaxsiy chatida ko'rinadi.
@@ -147,36 +157,53 @@ def run_funnel(tg, gem, slot, mode="now"):
             head += f"Manba: {meta['source_url']}\n"
         head += "— — — — —\n"
 
-        tg.send_photo(config.ADMIN_CHAT_ID, image, head + cap, buttons=BTN)
-        log(f"Tasdiqqa yuborildi, {config.FUNNEL_TIMEOUT_MIN} daqiqa kutamiz…")
+        if config.AUTO_PUBLISH:
+            log("AVTO rejim — tasdiq so'ralmaydi, darhol chiqaramiz.")
+        else:
+            tg.send_photo(config.ADMIN_CHAT_ID, image, head + cap, buttons=BTN)
+            log(f"Tasdiqqa yuborildi, {config.FUNNEL_TIMEOUT_MIN} daqiqa kutamiz…")
 
-        data, cb = tg.wait_for_callback("post:", config.FUNNEL_TIMEOUT_MIN * 60)
-        if data is None:
-            log("Javob kelmadi — post chiqmadi.")
-            return
-        action = data.split(":", 1)[1]
-        tg.answer_callback(cb, {"publish": "Qabul qilindi…", "rewrite": "Qayta yozilmoqda…",
-                                "cancel": "Bekor"}.get(action, ""))
-
-        if action == "cancel":
-            log("Bekor qilindi.")
-            return
-        if action == "rewrite":
-            continue
+            data, cb = tg.wait_for_callback("post:", config.FUNNEL_TIMEOUT_MIN * 60)
+            if data is None:
+                log("Javob kelmadi — post chiqmadi.")
+                return
+            action = data.split(":", 1)[1]
+            tg.answer_callback(cb, {"publish": "Qabul qilindi…",
+                                    "rewrite": "Qayta yozilmoqda…",
+                                    "cancel": "Bekor"}.get(action, ""))
+            if action == "cancel":
+                log("Bekor qilindi.")
+                return
+            if action == "rewrite":
+                continue
 
         if mode == "queue":
             queue.save(cap, image, post.get("audio") or "", meta)
+            history.add(slot, meta.get("angle_id"), cap)
             tg.send_message(config.ADMIN_CHAT_ID,
                             "📌 Saqlandi. Ertaga soat 07:00 da 4 kanalga o'zi chiqadi.")
             return
 
         posted = _send_to_channels(tg, chans, image, cap, post.get("audio"))
+        history.add(slot, meta.get("angle_id"), cap)
         if meta.get("fact_id"):
             funnel.mark_used(meta["fact_id"])
         if meta.get("watch_reactions") and posted:
             reactions.watch(posted, config.REACTION_GOAL)
-        tg.send_message(config.ADMIN_CHAT_ID,
-                        f"✅ {len(posted)}/{len(chans)} kanalga chiqdi.")
+
+        # Avto rejimda Sirojga nusxa yuboramiz — ko'rib turishi uchun
+        if config.AUTO_PUBLISH and posted:
+            note = (f"📤 <b>Chiqdi</b> · {len(posted)}/{len(chans)} kanal · "
+                    f"{meta['slot']} · burchak: {meta.get('angle_id') or '—'}\n"
+                    f"O'xshashlik: {sim:.0%}\n"
+                    f"Yoqmasa ayting — o'chiraman.\n— — — — —\n")
+            try:
+                tg.send_photo(config.ADMIN_CHAT_ID, image, note + cap)
+            except Exception as e:
+                log(f"nusxa yuborilmadi: {e}")
+        else:
+            tg.send_message(config.ADMIN_CHAT_ID,
+                            f"✅ {len(posted)}/{len(chans)} kanalga chiqdi.")
         return
 
     tg.send_message(config.ADMIN_CHAT_ID,

@@ -22,6 +22,17 @@ SYSTEM = """Sen Siroj Saidmuratovning Telegram kanali uchun kopirayter yozuvchis
 Auditoriya: O'zbekistonlik odamlar — o'qituvchilar, uy bekalari, talabalar.
 Kod yozmaydi. Sun'iy intellekt bilan nima qilish mumkinligini bilmoqchi.
 
+AUDITORIYA — ENG MUHIM MA'LUMOT:
+- Obunachilarning 60-80 foizi AYOLLAR.
+- Ko'pchiligi uy bekalari, onalar, o'qituvchilar. Kod yozmaydi, texnik emas.
+- Ular uchun ahamiyatli: uydan turib ishlash, bolalarni tashlab ketmaslik,
+  moslashuvchan vaqt, o'z daromadiga ega bo'lish, o'zini rivojlantirish.
+- Misol va obrazlarni shu hayotdan ol: bolalar uxlagandan keyingi vaqt, uy ishlari
+  orasidagi bo'sh soat, maktabdagi ish, qo'shni va dugonalar davrasi, oilaviy byudjet.
+- "Erkaklar klubi" ohangi BO'LMASIN: "biznes akula", "grind", "milliarder bo'l" — yo'q.
+- Ayollarga hurmat bilan murojaat. Kamsituvchi yoki "sizga baribir qiyin" ohang YO'Q.
+- Erkak o'quvchilar ham bor — ularni ham chetlab o'tma, lekin asosiy obraz ayol.
+
 ENG MUHIM: post TIRIK ODAM yozganday o'qilsin. Siroj o'zi yozganday.
 
 USLUB QOIDALARI (qat'iy):
@@ -35,6 +46,9 @@ USLUB QOIDALARI (qat'iy):
 - Chet el nomlari va raqamlarni o'zgartirma.
 
 QAT'IY TAQIQLAR:
+- POST MATNIDA SOTUV YO'Q. O'zingdan kurs taklif qilma, menejer havolasini
+  yozma, "yozing"/"qo'shiling"/"joy band qiling" dema.
+  Chorlovni kerak bo'lsa KOD o'zi oxiriga qo'shadi — sening ishing emas.
 - Narx haqida BIR OG'IZ ham gapirma.
 - "oqim" so'zini ISHLATMA — "yangi guruh", "o'qish boshlanadi" de.
 - Senga berilgan matnda YO'Q raqam, sana, ism yoki natijani O'YLAB TOPMA.
@@ -51,6 +65,12 @@ MAQOLA MATNI (faqat shu matndagi faktlarni ishlat):
 ---
 {text}
 ---
+
+AVVAL CHIQQAN POSTLAR — mavzuni ham, ilgakni ham TAKRORLAMA:
+{recent}
+
+MUHIM: bu post FAQAT yangilik. Sotuv yo'q, kurs yo'q, chorlov yo'q.
+O'quvchi o'qib "buni bilmagan ekanman" desin va do'stiga yuborsin.
 
 TUZILMA:
 1. Ilgak — eng hayratlanarli fakt yoki raqam, birinchi qator
@@ -77,6 +97,9 @@ MATN:
 {text}
 ---
 
+AVVAL CHIQQAN POSTLAR — TAKRORLAMA:
+{recent}
+
 TUZILMA:
 1. Ilgak — odam duch keladigan real muammo
 2. Yechim: 2-4 aniq qadam, har biri alohida qatorda
@@ -97,6 +120,9 @@ KURS: {name}
 KIMGA: {who}
 NIMALAR BOR: {points}
 
+AVVAL CHIQQAN POSTLAR — TAKRORLAMA:
+{recent}
+
 TUZILMA:
 1. Ilgak — shu yo'nalishga qiziqqan odamning haqiqiy savoli yoki orzusi
 2. Shu kursda nimalar bor — qisqa punktlar, har biri alohida qatorda
@@ -110,8 +136,18 @@ FAQAT shu JSON qaytar:
 {{"caption": "matn", "image_big": "1-4 so'z", "image_small": "3-6 so'z",
   "audio": "og'zaki variant, 250-450 belgi"}}"""
 
-INVITE = ("\n\nSun'iy intellektni o'rganayotganlar uchun jamoamiz bor. "
-          "Qo'shilmoqchi bo'lsangiz, yozing:\n{manager}")
+INVITE_LINES = [
+    "Buni o'rganish uchun ayni vaqti. Ertaga emas, bugun.",
+    "Tomosha qilib turishdan ko'ra, o'rganib qo'ygan yaxshi.",
+    "Bu narsalarni o'rganish uchun kech emas — hozir eng qulay payt.",
+    "Kuzatuvchi bo'lib qolmang. O'rganish bugundan boshlanadi.",
+    "Ertaga bu yanada oddiy bo'ladi. Bilgan odam esa oldinda bo'ladi.",
+]
+
+
+def _invite(manager: str, n: int) -> str:
+    line = INVITE_LINES[n % len(INVITE_LINES)]
+    return f"\n\n<b>{line}</b> \U0001F4CC\n\nQiziqsangiz, menejerga yozing:\n{manager}"
 
 
 def load_brief():
@@ -124,9 +160,17 @@ def kind_for(n: int, brief) -> str:
     return rot[n % len(rot)]
 
 
+def _recent(archive, n=8):
+    items = archive.recent(n)
+    if not items:
+        return "(hali post chiqmagan)"
+    return "\n".join(f"- [{it.get('level','')}] {it.get('title','')}" for it in items)
+
+
 def build(gem, archive):
     """(post, meta) qaytaradi. meta: kind, source_url, image_* , kicker."""
     brief = load_brief()
+    recent = _recent(archive)
     n = len(archive.items)
     kind = kind_for(n, brief)
     core = brief["core_message"]
@@ -136,19 +180,20 @@ def build(gem, archive):
         from src import news
         picked = news.pick(archive, want=1)
         if not picked:
-            print("[hype] yangi xabar topilmadi — kurs taklifiga o'tamiz")
-            kind = "offer"
+            print("[hype] yangi xabar topilmadi — amaliy maslahatga o'tamiz")
+            kind = "tool"
         else:
             item = news.with_text(picked[0])
             if len(item["text"]) < 200:
-                print("[hype] matn juda qisqa — kurs taklifiga o'tamiz")
-                kind = "offer"
+                print("[hype] matn juda qisqa — amaliy maslahatga o'tamiz")
+                kind = "tool"
             else:
                 meta.update(source_url=item["url"], source_title=item["title"],
                             kicker="AI YANGILIKLARI", kind="news")
                 post = gem.json(config.MODEL_WRITER,
                                 NEWS_PROMPT.format(title=item["title"], feed=item["feed"],
-                                                   text=item["text"], core=core),
+                                                   text=item["text"], core=core,
+                                                   recent=recent),
                                 system=SYSTEM, temperature=0.85)
                 return _finish(post, meta, brief, n)
 
@@ -171,9 +216,13 @@ def build(gem, archive):
             meta.update(source_url=chosen["url"], source_title=chosen["title"],
                         kicker="AMALIY MASLAHAT", kind="tool")
             post = gem.json(config.MODEL_WRITER,
-                            TOOL_PROMPT.format(title=chosen["title"], text=text, core=core),
+                            TOOL_PROMPT.format(title=chosen["title"], text=text, core=core,
+                                               recent=recent),
                             system=SYSTEM, temperature=0.8)
             return _finish(post, meta, brief, n)
+        if not brief.get("sales_allowed", False):
+            raise RuntimeError("Yangilik ham, maslahat ham topilmadi — "
+                               "bu kanalda sotuv posti chiqarilmaydi")
         print("[hype] maslahat uchun maqola topilmadi — kurs taklifiga o'tamiz")
         kind = "offer"
 
@@ -183,17 +232,19 @@ def build(gem, archive):
     meta.update(kicker=c["name"].upper(), kind="offer")
     post = gem.json(config.MODEL_WRITER,
                     OFFER_PROMPT.format(name=c["name"], who=c["for"],
-                                        points=", ".join(c["points"]), core=core),
+                                        points=", ".join(c["points"]), core=core,
+                                        recent=recent),
                     system=SYSTEM, temperature=0.85)
     return _finish(post, meta, brief, n)
 
 
 def _finish(post, meta, brief, n):
     cap = (post.get("caption") or "").strip()
-    every = int(brief.get("invite_every", 3))
-    # har 3-postda jamoaga yumshoq chorlov (kurs taklifida takrorlanmasin)
-    if meta["kind"] != "offer" and every and (n + 1) % every == 0:
-        cap += INVITE.format(manager=brief["manager"])
+    every = int(brief.get("invite_every", 0))
+    # chorlov faqat sotuvga ruxsat berilgan kanalda
+    if brief.get("sales_allowed", False) and meta["kind"] != "offer" \
+            and every and (n + 1) % every == 0:
+        cap += _invite(brief["manager"], n)
     post["caption"] = cap
     meta["image_big"] = post.get("image_big") or ""
     meta["image_small"] = post.get("image_small") or ""

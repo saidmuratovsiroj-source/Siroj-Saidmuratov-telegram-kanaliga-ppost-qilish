@@ -9,10 +9,10 @@
     "news",
     "news",
     "news",
-    "tool",
-    "offer"
+    "news",
+    "tool"
   ],
-  "invite_every": 3,
+  "invite_every": 4,
   "courses": [
     {
       "name": "Video yaratish",
@@ -52,5 +52,7 @@
     }
   ],
   "posts_per_day": 1,
-  "posts_per_day_note": "Kuniga 1 ta. Ba'zan 2 ta bo'lishi mumkin — ikkinchisi qo'lda so'ralganda chiqariladi."
+  "posts_per_day_note": "Kuniga 1 ta. Ba'zan 2 ta bo'lishi mumkin — ikkinchisi qo'lda so'ralganda chiqariladi.",
+  "sales_allowed": true,
+  "sales_note": "Har post sotuv EMAS. Yangilik toza qoladi, lekin har invite_every-inchi postning oxiriga yumshoq chorlov qo'shiladi: 'hozir o'rganish vaqti' + menejer havolasi."
 }

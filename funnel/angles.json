@@ -1,0 +1,171 @@
+{
+  "_izoh": "Har post uchun BOSHQA burchak. Bot navbat bilan eng eskisini oladi — shuning uchun postlar takrorlanmaydi. Yangi burchak qo'shish: shu ro'yxatga bitta qator qo'shish kifoya.",
+  "value": [
+    {
+      "id": "v-foto",
+      "angle": "Neyro-fotosessiya: studiyaga bormasdan professional portret olish. Kimga kerak: rezyume, ijtimoiy tarmoq, biznes sahifa."
+    },
+    {
+      "id": "v-sayt",
+      "angle": "Vayb-kodlash: bitta kod yozmasdan sayt yasash. Kimga kerak: kichik biznes, xizmat ko'rsatuvchi, o'qituvchi."
+    },
+    {
+      "id": "v-multfilm",
+      "angle": "Multfilm va animatsiya: bolalar uchun kontent yasash. Kimga kerak: onalar, o'qituvchilar, YouTube kanal yuritmoqchilar."
+    },
+    {
+      "id": "v-youtube",
+      "angle": "Amerika YouTube: nega aynan AQSh auditoriyasi. Til bilmasa ham ishlaydigan formatlar."
+    },
+    {
+      "id": "v-ovoz",
+      "angle": "Sun'iy ovoz va dublyaj: video ovozini almashtirish, boshqa tilga o'girish."
+    },
+    {
+      "id": "v-mijoz",
+      "angle": "Birinchi mijoz qayerdan keladi. Buyurtma topishning aniq joylari."
+    },
+    {
+      "id": "v-telefon",
+      "angle": "Kompyuter shart emas: hammasini telefonda qilish mumkinmi degan savolga javob."
+    },
+    {
+      "id": "v-vaqt",
+      "angle": "Kuniga bir soat. Vaqt yo'q degan odam uchun real jadval."
+    },
+    {
+      "id": "v-yosh",
+      "angle": "Yosh masalasi: 40 dan oshganlar, o'qituvchilar, uy bekalari uchun."
+    },
+    {
+      "id": "v-birinchi-qadam",
+      "angle": "Nimadan boshlash kerak: birinchi hafta nima qilinadi."
+    },
+    {
+      "id": "v-xato",
+      "angle": "Yangi boshlovchilar qiladigan 3 ta xato va ularni qanday chetlab o'tish."
+    },
+    {
+      "id": "v-portfolio",
+      "angle": "Portfolio: mijozga nima ko'rsatasiz, qanday yig'iladi."
+    },
+    {
+      "id": "v-bot",
+      "angle": "Telegram bot yasash: kichik biznes uchun avtomat sotuvchi."
+    },
+    {
+      "id": "v-reklama",
+      "angle": "AI bilan reklama roliki: mahsulotni ko'rsatadigan qisqa video."
+    },
+    {
+      "id": "v-uydan",
+      "angle": "Uydan turib ishlash: bolalarni bog'chaga tashlab ketmasdan, uy sharoitida buyurtma bajarish."
+    },
+    {
+      "id": "v-kechqurun",
+      "angle": "Bolalar uxlagandan keyingi ikki soat: kun davomida vaqt topolmaydigan onalar uchun real jadval."
+    },
+    {
+      "id": "v-oqituvchi",
+      "angle": "O'qituvchilar uchun: dars ishlanmasi, test, taqdimot va ko'rgazmali material AI bilan tez tayyorlanadi."
+    },
+    {
+      "id": "v-ozgina-daromad",
+      "angle": "Birinchi kichik daromad: qo'shni va tanishlarning to'yi, tug'ilgan kuni uchun taklifnoma va video yasash."
+    },
+    {
+      "id": "v-dugona",
+      "angle": "Yolg'iz emas: guruhdagi dugonalar bilan birga o'rganish, bir-birini qo'llab-quvvatlash."
+    },
+    {
+      "id": "v-instagram",
+      "angle": "O'z sahifangizni yuritish: kontent yasashga ketadigan vaqtni bir necha barobar qisqartirish."
+    },
+    {
+      "id": "v-bola-kontent",
+      "angle": "Bolalar uchun ta'limiy multfilm va ertak yasash — o'z farzandingizga ham, sotuvga ham."
+    }
+  ],
+  "closing": [
+    {
+      "id": "c-efir",
+      "kind": "trigger",
+      "angle": "Jonli efir taklifi. Shart: post ostida olovcha yig'ilsa efir bo'ladi."
+    },
+    {
+      "id": "c-savol",
+      "kind": "trigger",
+      "angle": "Izohda savol qoldirishga chorlov: eng ko'p beriladigan savollarga javob beraman."
+    },
+    {
+      "id": "c-dars",
+      "kind": "trigger",
+      "angle": "Bepul dars taklifi. Shart: olovcha yig'ilsa dars o'taman. Qaysi mavzu kerakligini izohga yozing."
+    },
+    {
+      "id": "c-sorovnoma",
+      "kind": "trigger",
+      "angle": "Nima o'rganmoqchisiz: video, sayt, musiqa yoki YouTube. Izohda tanlashga chorlov."
+    },
+    {
+      "id": "c-kelajak",
+      "kind": "dajim",
+      "angle": "Kelajakka ko'chirish: uch oydan keyin o'zingizni qanday ko'rasiz."
+    },
+    {
+      "id": "c-keyingi-safar",
+      "kind": "dajim",
+      "angle": "'Keyingi safar' sindromi: har safar keyinga qoldiradigan odam haqida."
+    },
+    {
+      "id": "c-vaqt-bahona",
+      "kind": "dajim",
+      "angle": "'Vaqtim yo'q' bahonasi: telefonda o'tkaziladigan soatlar bilan taqqoslash."
+    },
+    {
+      "id": "c-qorquv",
+      "kind": "dajim",
+      "angle": "'Uddalay olmasam' qo'rquvi: hamma noldan boshlaydi."
+    },
+    {
+      "id": "c-bir-yil",
+      "kind": "dajim",
+      "angle": "Bir yil oldin boshlaganlar bilan taqqoslash: vaqt baribir o'tadi."
+    },
+    {
+      "id": "c-yolgizlik",
+      "kind": "dajim",
+      "angle": "Yolg'iz o'rganish qiyin: guruh, ustoz va jamoa nima beradi."
+    },
+    {
+      "id": "c-oxirgi-kun",
+      "kind": "dajim",
+      "angle": "Muddat yaqinlashdi: qaror qabul qilish vaqti keldi."
+    },
+    {
+      "id": "c-nimaga-kerak",
+      "kind": "dajim",
+      "angle": "Bu kim uchun EMAS: tez pul izlayotganlar uchun emas. Kim uchun — mehnat qilishga tayyorlar uchun."
+    },
+    {
+      "id": "c-oz-daromad",
+      "kind": "dajim",
+      "angle": "O'z daromadiga ega bo'lish: kimdandir so'ramasdan, o'zi ishlab topish hissi."
+    },
+    {
+      "id": "c-bolalarim",
+      "kind": "dajim",
+      "angle": "Farzandlar oldida namuna: ona o'rganayotganini ko'rgan bola ham o'rganadi."
+    },
+    {
+      "id": "c-uyat-emas",
+      "kind": "dajim",
+      "angle": "Noldan boshlash uyat emas: hamma bir paytlar hech narsa bilmagan."
+    },
+    {
+      "id": "c-ayol-savol",
+      "kind": "trigger",
+      "angle": "Ayollardan kelayotgan savollar: uy ishlari bilan ulguraman, texnikani bilmayman, yoshim o'tib qolgan. Shu savollarga javob beraman."
+    }
+  ]
+}

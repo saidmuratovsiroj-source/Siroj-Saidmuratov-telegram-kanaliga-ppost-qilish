@@ -94,24 +94,53 @@ def fetch_all(max_age_days=None) -> list:
     return items
 
 
+# Zerikarli korporativ/moliyaviy xabarlar — oddiy o'quvchiga qiziq emas
 SKIP = ("earnings call", "stock", "shares", "ipo", "lawsuit", "court", "acquires",
-        "funding round", "series a", "series b", "raises $", "layoff", "hiring")
+        "funding round", "series a", "series b", "series c", "raises $", "layoff",
+        "hiring", "valuation", "data center", "chip", "semiconductor", "kubernetes",
+        "enterprise", "api ", "sdk", "open source model weights", "benchmark",
+        "quarterly", "revenue run rate", "merger", "antitrust", "regulation",
+        "policy", "senate", "congress")
+
+# Qiziqarli mavzular — oddiy odam hayotiga tegishli
+HOT = ("free", "launch", "launches", "new app", "video", "image", "photo",
+       "music", "voice", "phone", "iphone", "android", "whatsapp", "instagram",
+       "tiktok", "youtube", "students", "teachers", "parents", "kids", "school",
+       "jobs", "job", "salary", "earn", "earned", "income", "hustle", "scam",
+       "deepfake", "shocked", "viral", "first time", "banned", "quit",
+       "replaced", "robot", "translate", "chatgpt", "gemini", "claude")
+
+
+def _score(item) -> float:
+    """Qanchalik qiziqarli. Yuqori ball = oldinroq chiqadi."""
+    low = item["title"].lower()
+    score = sum(2 for w in HOT if w in low)
+    if re.search(r"\d", item["title"]):        # sarlavhada raqam bor
+        score += 2
+    if "?" in item["title"]:
+        score += 1
+    if item.get("when"):
+        age_h = (datetime.now(timezone.utc) - item["when"]).total_seconds() / 3600
+        score += max(0.0, 6.0 - age_h / 8)     # yangiroq bo'lsa ko'proq ball
+    return score
 
 
 def pick(archive, want=1) -> list:
-    """Ishlatilmagan, auditoriyaga tushunarli xabarlarni tanlaydi."""
+    """Eng yangi va eng qiziqarli, hali ishlatilmagan xabarlar."""
     used = set(archive.urls())
-    out = []
+    cands = []
     for it in fetch_all():
         if it["url"] in used:
             continue
         low = it["title"].lower()
         if any(w in low for w in SKIP):
             continue
-        out.append(it)
-        if len(out) >= want:
-            break
-    return out
+        cands.append(it)
+
+    cands.sort(key=_score, reverse=True)
+    for it in cands[:5]:
+        print(f"[news] nomzod ({_score(it):.1f}): {it['title'][:70]}")
+    return cands[:want]
 
 
 def with_text(item: dict) -> dict:

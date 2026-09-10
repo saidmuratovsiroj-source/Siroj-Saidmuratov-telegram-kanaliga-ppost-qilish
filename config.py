@@ -39,10 +39,19 @@ NEWS_FEEDS = [
     ("Google News AI", "https://news.google.com/rss/search?q=artificial+intelligence"
                        "+when:3d&hl=en-US&gl=US&ceid=US:en"),
     ("Google News: AI daromad", "https://news.google.com/rss/search?q=%22AI%22+"
-                                "%28side+hustle+OR+freelancer+OR+earned%29+when:7d"
+                                "%28side+hustle+OR+freelancer+OR+earned%29+when:3d"
                                 "&hl=en-US&gl=US&ceid=US:en"),
+    ("Engadget", "https://www.engadget.com/rss.xml"),
+    ("The Verge", "https://www.theverge.com/rss/index.xml"),
+    ("Google News: AI ilova", "https://news.google.com/rss/search?q=%28ChatGPT+OR+Gemini"
+                              "+OR+%22AI+app%22%29+%28free+OR+launch+OR+new%29+when:2d"
+                              "&hl=en-US&gl=US&ceid=US:en"),
+    ("Google News: AI va ish", "https://news.google.com/rss/search?q=%22AI%22+%28teachers"
+                               "+OR+students+OR+parents+OR+jobs%29+when:3d"
+                               "&hl=en-US&gl=US&ceid=US:en"),
 ]
-NEWS_MAX_AGE_DAYS = int(os.getenv("NEWS_MAX_AGE_DAYS", "5"))
+# Faqat ENG SO'NGGI yangiliklar — 2 kundan eskisi olinmaydi
+NEWS_MAX_AGE_DAYS = int(os.getenv("NEWS_MAX_AGE_DAYS", "2"))
 
 # --- Rasmiy manbalar: Claude Help Center bo'limlari ---
 # Bot mavzularni shulardan oladi va faktlarni shularga qarshi tekshiradi.
@@ -72,20 +81,27 @@ REACTION_GOAL = int(os.getenv("REACTION_GOAL", "100"))
 FUNNEL_TIMEOUT_MIN = int(os.getenv("FUNNEL_TIMEOUT_MIN", "90"))
 
 # Soat -> qaysi vazifa (Toshkent vaqti)
-#   07 -> queued : kecha tasdiqlangan post 4 kanalga CHIQADI (so'ramasdan)
-#   10 -> value  : vebinar kanallariga, tasdiq so'raladi
-#   12 -> main   : asosiy kanalga, tasdiq so'raladi
-#   17 -> closing: vebinar kanallariga, tasdiq so'raladi
-#   19 -> prepare: ERTANGI 07:00 posti yoziladi va tasdiqqa yuboriladi
-# Railway cron (UTC):  0 2,5,7,12,14 * * *
-SCHEDULE = {7: "queued", 10: "value", 12: "main", 17: "closing", 19: "prepare"}
+#   07 -> fact   : vebinar kanallariga
+#   10 -> value  : vebinar kanallariga
+#   12 -> main   : asosiy kanalga (yangilik)
+#   17 -> closing: vebinar kanallariga
+# AUTO_PUBLISH=1 bo'lsa hammasi so'ramasdan chiqadi.
+# Railway cron (UTC):  0 2,5,7,12 * * *
+SCHEDULE = {7: "fact", 10: "value", 12: "main", 17: "closing"}
 
 # --- Tasdiq ---
+# AUTO_PUBLISH=1 bo'lsa bot tugma so'ramaydi — postni o'zi chiqaradi va
+# Sirojga nusxasini yuboradi ("chiqdi" xabari bilan). Siroj ulgurmayotgani uchun.
+AUTO_PUBLISH = os.getenv("AUTO_PUBLISH", "1") == "1"
 APPROVAL_TIMEOUT_MIN = int(os.getenv("APPROVAL_TIMEOUT_MIN", "120"))
-MAX_REWRITES = 3
+MAX_REWRITES = int(os.getenv("MAX_REWRITES", "4"))
 
 # --- Sifat nazorati ---
 QC_MAX_ATTEMPTS = 2
+
+# Yangi post oxirgi postlarga shundan ko'p o'xshasa — qayta yoziladi.
+# 0.45 = kalit so'zlarning 45% i takrorlangan.
+SIMILARITY_LIMIT = float(os.getenv("SIMILARITY_LIMIT", "0.35"))
 
 # --- Post cheklovlari (Telegram: rasm caption = 1024 belgi) ---
 CAPTION_LIMIT = 1024

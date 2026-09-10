@@ -80,40 +80,51 @@ def main():
             head += f"Manba: {meta['source_url']}\n"
         head += "— — — — —\n"
 
-        tg.send_photo(config.ADMIN_CHAT_ID, image, head + cap, buttons=BTN)
-        log(f"Tasdiqqa yuborildi. {config.APPROVAL_TIMEOUT_MIN} daqiqa kutamiz…")
+        if not config.AUTO_PUBLISH:
+            tg.send_photo(config.ADMIN_CHAT_ID, image, head + cap, buttons=BTN)
+            log(f"Tasdiqqa yuborildi. {config.APPROVAL_TIMEOUT_MIN} daqiqa kutamiz…")
 
-        data, cb = tg.wait_for_callback("post:", config.APPROVAL_TIMEOUT_MIN * 60)
-        if data is None:
-            log("Javob kelmadi — post chiqarilmadi.")
-            tg.send_message(config.ADMIN_CHAT_ID,
-                            "⏰ Vaqt tugadi, post chiqmadi. Keyingi safar yangisi keladi.")
-            return
+            data, cb = tg.wait_for_callback("post:", config.APPROVAL_TIMEOUT_MIN * 60)
+            if data is None:
+                log("Javob kelmadi — post chiqarilmadi.")
+                tg.send_message(config.ADMIN_CHAT_ID,
+                                "⏰ Vaqt tugadi, post chiqmadi.")
+                return
+            action = data.split(":", 1)[1]
+            tg.answer_callback(cb, {"publish": "Chiqarilmoqda…",
+                                    "rewrite": "Qayta yozilmoqda…",
+                                    "cancel": "Bekor qilindi"}.get(action, ""))
+            if action == "cancel":
+                log("Bekor qilindi.")
+                tg.send_message(config.ADMIN_CHAT_ID, "❌ Bekor qilindi.")
+                return
+            if action == "rewrite":
+                log("Qayta yozilmoqda…")
+                continue
+        else:
+            log("AVTO rejim — tasdiq so'ralmaydi.")
 
-        action = data.split(":", 1)[1]
-        tg.answer_callback(cb, {"publish": "Chiqarilmoqda…", "rewrite": "Qayta yozilmoqda…",
-                                "cancel": "Bekor qilindi"}.get(action, ""))
-
-        if action == "cancel":
-            log("Bekor qilindi.")
-            tg.send_message(config.ADMIN_CHAT_ID, "❌ Bekor qilindi.")
-            return
-
-        if action == "publish":
-            tg.send_photo(config.CHANNEL_ID, image, cap)
-            audio, akind = voice.make(post.get("audio") or "")
-            if audio:
-                try:
-                    tg.send_voice(config.CHANNEL_ID, audio, akind)
-                except Exception as e:
-                    log(f"ovoz yuborilmadi: {e}")
-            archive.add(meta.get("source_title") or (meta.get("image_big") or "post"),
-                        meta["kind"], cap[:160], meta.get("source_url", ""))
-            log("Kanalga chiqarildi ✅")
+        tg.send_photo(config.CHANNEL_ID, image, cap)
+        audio, akind = voice.make(post.get("audio") or "")
+        if audio:
+            try:
+                tg.send_voice(config.CHANNEL_ID, audio, akind)
+            except Exception as e:
+                log(f"ovoz yuborilmadi: {e}")
+        archive.add(meta.get("source_title") or (meta.get("image_big") or "post"),
+                    meta["kind"], cap[:160], meta.get("source_url", ""))
+        log("Kanalga chiqarildi ✅")
+        if config.AUTO_PUBLISH:
+            note = (f"📤 <b>Chiqdi</b> · {config.CHANNEL_ID} · "
+                    f"{KIND_UZ.get(meta['kind'], meta['kind'])}\n"
+                    f"Yoqmasa ayting — o'chiraman.\n— — — — —\n")
+            try:
+                tg.send_photo(config.ADMIN_CHAT_ID, image, note + cap)
+            except Exception as e:
+                log(f"nusxa yuborilmadi: {e}")
+        else:
             tg.send_message(config.ADMIN_CHAT_ID, "✅ Post kanalga chiqdi.")
-            return
-
-        log("Qayta yozilmoqda…")
+        return
 
     tg.send_message(config.ADMIN_CHAT_ID,
                     f"🔄 {config.MAX_REWRITES} marta qayta yozildi, tasdiqlanmadi. "

@@ -1,0 +1,113 @@
+name: AiPro post
+
+# Railway o'rniga — GitHub Actions bepul jadval.
+# Har ishga tushganda bitta post yozadi, chiqaradi va o'chadi.
+# Vaqtlar UTC da (GitHub boshqacha bilmaydi). Toshkent = UTC + 5.
+
+on:
+  # Kuniga 3 ta post — kanalga 3 tadan ko'p chiqmasin.
+  schedule:
+    - cron: "0 2 * * *"    # 07:00 Toshkent — fact
+    - cron: "0 7 * * *"    # 12:00 Toshkent — main
+    - cron: "0 12 * * *"   # 17:00 Toshkent — mini
+    # Kampaniya rejimi yoqilganda (funnel/minikurs.json -> takeover)
+    # uchalasi ham MINI KURS posti chiqaradi, faqat ohangi har xil.
+  workflow_dispatch:
+    inputs:
+      slot:
+        description: "Qaysi post: fact / value / main / mini / closing"
+        required: true
+        default: "mini"
+        type: choice
+        options: [mini, fact, main, value, closing]
+      test:
+        description: "SINOV: post kanallarga EMAS, faqat Sirojning shaxsiy chatiga boradi"
+        required: false
+        default: false
+        type: boolean
+
+# Bir vaqtda ikkita post ishlamasin — holat fayli buzilmasin
+concurrency:
+  group: aipro-post
+  cancel-in-progress: false
+
+jobs:
+  post:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write          # holat faylini repoga qaytarib yozish uchun
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Kutubxonalar
+        run: pip install -r requirements.txt
+
+      - name: Qaysi post ekanini aniqlash
+        id: pick
+        run: |
+          case "${{ github.event.schedule }}" in
+            "0 2 * * *")  SLOT=fact ;;
+            "0 7 * * *")  SLOT=main ;;
+            "0 12 * * *") SLOT=mini ;;
+            *)            SLOT="${{ inputs.slot }}" ;;
+          esac
+          echo "slot=$SLOT" >> "$GITHUB_OUTPUT"
+          echo "Slot: $SLOT"
+
+      # SINOV REJIMI: kanallar ro'yxatini vaqtincha Sirojning shaxsiy chatiga
+      # almashtiramiz. Repodagi fayl o'zgarmaydi — faqat shu ishga tushishda.
+      - name: Sinov rejimi — faqat shaxsiy chatga
+        if: inputs.test == true
+        env:
+          ADMIN_CHAT_ID: ${{ secrets.ADMIN_CHAT_ID }}
+        run: |
+          python - <<'PY'
+          import json, os
+          me = int(os.environ["ADMIN_CHAT_ID"])
+          for p in ("funnel/minikurs.json", "funnel/campaign.json"):
+              try:
+                  b = json.load(open(p, encoding="utf-8"))
+              except Exception:
+                  continue
+              b["channels"] = [{"title": "SINOV — shaxsiy chat", "id": me}]
+              json.dump(b, open(p, "w", encoding="utf-8"), ensure_ascii=False, indent=2)
+              print(f"[sinov] {p}: kanallar shaxsiy chatga almashtirildi")
+          PY
+          echo "SINOV REJIMI — post hech qaysi kanalga chiqmaydi."
+
+      - name: Post yozish va chiqarish
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CHANNEL_ID:     ${{ secrets.CHANNEL_ID }}
+          ADMIN_CHAT_ID:  ${{ secrets.ADMIN_CHAT_ID }}
+          ELEVEN_API_KEY: ${{ secrets.ELEVEN_API_KEY }}
+          AUTO_PUBLISH: "1"
+          PYTHONUNBUFFERED: "1"
+        run: python run.py "${{ steps.pick.outputs.slot }}"
+
+      # Takrorlanmaslik tarixi va ishlatilgan faktlar repoda saqlanadi —
+      # aks holda bot ertaga yana bir xil post yozadi.
+      # Sinovda saqlanmaydi: sinov posti burchakni "yeb qo'ymasin".
+      - name: Holatni saqlash
+        if: always() && inputs.test != true
+        run: |
+          git config user.name  "aipro-bot"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A data funnel/facts.json 2>/dev/null || true
+          if git diff --staged --quiet; then
+            echo "O'zgarish yo'q."
+          else
+            git commit -m "holat: ${{ steps.pick.outputs.slot }} ($(date -u '+%Y-%m-%d %H:%M') UTC)"
+            for i in 1 2 3; do
+              git pull --rebase --autostash && git push && break
+              echo "push $i urinish muvaffaqiyatsiz, qayta urinamiz…"
+              sleep 5
+            done
+          fi

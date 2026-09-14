@@ -240,7 +240,7 @@ def publish_queued(tg):
 
 
 # --------------------------------------------------------------- mini kurs
-def run_mini(tg, gem):
+def run_mini(tg, gem, slot="mini"):
     """Mini kurs sotuv posti — 5 kanalga, pastda to'lov tugmasi bilan."""
     b = minikurs.load_brief()
     if not b.get("active"):
@@ -248,10 +248,11 @@ def run_mini(tg, gem):
         return run_funnel(tg, gem, "closing", mode="now")
 
     chans = b["channels"]
-    log(f"Mini kurs: {len(chans)} kanal | {b['price']} | {b['seats']} joy")
+    log(f"Mini kurs: {len(chans)} kanal | {b['price']} | {b['seats']} joy | "
+        f"qabulga {minikurs.days_left(b)} kun")
 
     for attempt in range(1, config.MAX_REWRITES + 1):
-        post, meta = minikurs.build(gem)
+        post, meta = minikurs.build(gem, slot)
         cap = (post.get("caption") or "").strip()
         log(f"Post yozildi ({len(cap)} belgi), burchak={meta['angle_id']}")
 
@@ -336,8 +337,18 @@ def main():
     tg.drain()
     gem = Gemini(config.GEMINI_API_KEY)
 
+    # KAMPANIYA REJIMI: mini kurs qabuli ochiq bo'lsa, kunning HAMMA posti
+    # mini kurs haqida chiqadi — yangilik ham, qiymat posti ham emas.
+    # funnel/minikurs.json dagi "takeover": false qilinsa eski jadval qaytadi.
+    brief = minikurs.load_brief()
+    if slot != "mini" and brief.get("active") and brief.get("takeover"):
+        if minikurs.days_left(brief) > 0:
+            log(f"Kampaniya rejimi: '{slot}' o'rniga MINI KURS posti chiqadi.")
+            return run_mini(tg, gem, slot)
+        log("Mini kurs muddati tugagan — odatdagi jadvalga qaytamiz.")
+
     if slot == "mini":
-        run_mini(tg, gem)
+        run_mini(tg, gem, slot)
     elif slot in ("main", "claude"):
         import main as main_channel
         main_channel.main()

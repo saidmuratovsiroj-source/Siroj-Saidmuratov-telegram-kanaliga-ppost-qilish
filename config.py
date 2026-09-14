@@ -4,7 +4,7 @@ from zoneinfo import ZoneInfo
 
 TZ = ZoneInfo("Asia/Tashkent")
 
-# --- Maxfiy kalitlar (Railway Variables orqali beriladi) ---
+# --- Maxfiy kalitlar (GitHub Actions Secrets orqali beriladi) ---
 TELEGRAM_TOKEN = os.environ["TELEGRAM_TOKEN"]
 GEMINI_API_KEY = os.environ["GEMINI_API_KEY"]
 CHANNEL_ID = os.environ["CHANNEL_ID"]        # masalan: @aipro_kanal
@@ -86,9 +86,9 @@ FUNNEL_TIMEOUT_MIN = int(os.getenv("FUNNEL_TIMEOUT_MIN", "90"))
 #   12 -> main   : asosiy kanalga (yangilik)
 #   17 -> closing: vebinar kanallariga
 # AUTO_PUBLISH=1 bo'lsa hammasi so'ramasdan chiqadi.
-# Railway cron (UTC):  0 2,5,7,12 * * *
 #   17 -> mini  : MINI KURS sotuv posti (funnel/minikurs.json active bo'lsa)
-SCHEDULE = {7: "fact", 10: "value", 12: "main", 17: "mini"}
+# Jadval GitHub Actions'da: .github/workflows/post.yml (UTC: 2, 5, 7, 12)
+SCHEDULE = {7: "fact", 12: "main", 17: "mini"}
 
 # --- Tasdiq ---
 # AUTO_PUBLISH=1 bo'lsa bot tugma so'ramaydi — postni o'zi chiqaradi va

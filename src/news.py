@@ -38,6 +38,17 @@ def _when(raw: str):
         return None
 
 
+def _real_link(link: str, raw_desc: str) -> str:
+    """Google News havolasi yo'naltiruvchi sahifa — matni yo'q.
+    Tavsif ichidagi asl nashr havolasini topamiz."""
+    if "news.google.com" not in (link or ""):
+        return ""
+    for m in re.findall(r'href="(https?://[^"]+)"', raw_desc or ""):
+        if "news.google.com" not in m and "google.com/search" not in m:
+            return m
+    return ""
+
+
 def _parse(xml: str, feed_name: str) -> list:
     out = []
     try:
@@ -49,8 +60,11 @@ def _parse(xml: str, feed_name: str) -> list:
     # RSS 2.0
     for it in root.iter("item"):
         link = _text(it.find("link"))
+        desc_el = it.find("description")
+        raw_desc = (desc_el.text or "") if desc_el is not None else ""
         out.append({"title": _text(it.find("title")), "url": link,
-                    "summary": _text(it.find("description"))[:600],
+                    "real_url": _real_link(link, raw_desc),
+                    "summary": _text(desc_el)[:600],
                     "when": _when(_text(it.find("pubDate"))), "feed": feed_name})
     # Atom
     for it in root.findall(".//atom:entry", NS):
@@ -145,11 +159,19 @@ def pick(archive, want=1) -> list:
 
 def with_text(item: dict) -> dict:
     """Maqolaning to'liq matnini qo'shadi. Olinmasa — qisqacha bilan qoladi."""
-    try:
-        item["text"] = sources.fetch_article(item["url"], max_chars=7000)
-    except Exception as e:
-        print(f"[news] matn olinmadi ({e}) — qisqacha bilan davom etamiz")
-        item["text"] = ""
+    item["text"] = ""
+    for url in (item.get("real_url"), item.get("url")):
+        if not url:
+            continue
+        try:
+            t = sources.fetch_article(url, max_chars=7000)
+        except Exception as e:
+            print(f"[news] matn olinmadi ({type(e).__name__}) — {url[:50]}…")
+            continue
+        if len(t) > len(item["text"]):
+            item["text"] = t
+        if len(item["text"]) >= 400:
+            break
     if len(item["text"]) < 400:
         item["text"] = item.get("summary", "")
     return item

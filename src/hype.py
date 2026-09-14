@@ -178,24 +178,29 @@ def build(gem, archive):
 
     if kind == "news":
         from src import news
-        picked = news.pick(archive, want=1)
-        if not picked:
-            print("[hype] yangi xabar topilmadi — amaliy maslahatga o'tamiz")
+        picked = news.pick(archive, want=8)
+        # Birinchi nomzodning matni olinmasa — keyingisiga o'tamiz.
+        # Avval bitta urinish bor edi, shuning uchun yangilik o'rniga
+        # doim eski rubrika chiqib ketardi.
+        item = None
+        for cand in picked:
+            got = news.with_text(cand)
+            if len(got.get("text") or "") >= 200:
+                item = got
+                break
+            print(f"[hype] matn qisqa, keyingisi: {cand['title'][:50]}…")
+        if not item:
+            print("[hype] hech bir xabarning matni olinmadi — amaliy maslahatga o'tamiz")
             kind = "tool"
         else:
-            item = news.with_text(picked[0])
-            if len(item["text"]) < 200:
-                print("[hype] matn juda qisqa — amaliy maslahatga o'tamiz")
-                kind = "tool"
-            else:
-                meta.update(source_url=item["url"], source_title=item["title"],
-                            kicker="AI YANGILIKLARI", kind="news")
-                post = gem.json(config.MODEL_WRITER,
-                                NEWS_PROMPT.format(title=item["title"], feed=item["feed"],
-                                                   text=item["text"], core=core,
-                                                   recent=recent),
-                                system=SYSTEM, temperature=0.85)
-                return _finish(post, meta, brief, n)
+            meta.update(source_url=item["url"], source_title=item["title"],
+                        kicker="AI YANGILIKLARI", kind="news")
+            post = gem.json(config.MODEL_WRITER,
+                            NEWS_PROMPT.format(title=item["title"], feed=item["feed"],
+                                               text=item["text"], core=core,
+                                               recent=recent),
+                            system=SYSTEM, temperature=0.85)
+            return _finish(post, meta, brief, n)
 
     if kind == "tool":
         from src import research, sources

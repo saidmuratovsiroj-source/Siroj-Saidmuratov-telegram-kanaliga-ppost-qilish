@@ -1,5 +1,9 @@
 {
   "active": true,
+  "takeover": true,
+  "_takeover_izoh": "true bo'lsa kunning HAMMA posti mini kurs haqida chiqadi (yangilik ham, vebinar posti ham yo'q). Kampaniya tugagach false qiling.",
+  "start_date": "2026-09-14",
+  "_start_izoh": "Qabul boshlangan kun. Shundan open_days o'tgach postlar o'zi odatdagi jadvalga qaytadi.",
   "name": "AI Video Creator — mini kurs",
   "price": "99 000 so'm",
   "seats": 100,
@@ -88,6 +92,62 @@
     {
       "id": "m-qisqa",
       "angle": "Ko'p vaqt olmaydi. Darslar qisqa — bir kunda ko'rib chiqish mumkin."
+    },
+    {
+      "id": "m-kechiktirish",
+      "angle": "Kechiktirishning narxi. 'Keyinroq qilaman' deb yurib, o'tgan safar ham qolib ketgandir. Bu safar qabul 7 kun — keyin yopiladi."
+    },
+    {
+      "id": "m-dukon",
+      "angle": "Do'kon yoki kichik biznes egasi uchun: mahsulotingizni video bilan ko'rsatish. Rasm emas, harakatdagi video."
+    },
+    {
+      "id": "m-instagram",
+      "angle": "Sahifangiz jonlanmayapti, chunki faqat rasm qo'yasiz. Video boshqacha ishlaydi."
+    },
+    {
+      "id": "m-buyurtma",
+      "angle": "Boshqalarga video yasab berish. Bitta ko'nikma — bir nechta mijoz."
+    },
+    {
+      "id": "m-uyda",
+      "angle": "Uydan chiqmasdan. Telefon va internet yetadi — studiya ham, jamoa ham kerak emas."
+    },
+    {
+      "id": "m-ayol",
+      "angle": "Uy ishlari orasidagi bir soat. Bolalar uxlagach o'tirib ko'rish mumkin — darslar yozib olingan."
+    },
+    {
+      "id": "m-birinchi",
+      "angle": "Birinchi videongiz mukammal bo'lmaydi — va bo'lishi shart emas. Muhimi: birinchisini yasab ko'rish."
+    },
+    {
+      "id": "m-savol",
+      "angle": "Eng ko'p beriladigan savollarga qisqa javob: nima o'rgatiladi, qancha davom etadi, kimga mos."
+    },
+    {
+      "id": "m-qolganjoy",
+      "angle": "Joylar kamayib bormoqda. Qisqa eslatma posti — uzun tushuntirish yo'q, faqat turtki."
+    },
+    {
+      "id": "m-taqqos",
+      "angle": "Bitta rolikni buyurtma qilish va butun ko'nikmani egallash o'rtasidagi farq."
+    },
+    {
+      "id": "m-ertaga",
+      "angle": "Ertaga emas, bugun. Ertaga deganlar odatda umuman boshlamaydi."
+    },
+    {
+      "id": "m-yopiq",
+      "angle": "Darslar yopiq Telegram kanalda. To'lagan odam darhol hammasini oladi — kutish yo'q."
+    },
+    {
+      "id": "m-yosh",
+      "angle": "Yosh chegarasi yo'q. Texnikani bilmaganlar ham noldan boshlaydi."
+    },
+    {
+      "id": "m-oxirgikun",
+      "angle": "Oxirgi kun. Eng qisqa post: bugun yoki hech qachon. Ortiqcha gap yo'q."
     }
   ],
   "banned": [

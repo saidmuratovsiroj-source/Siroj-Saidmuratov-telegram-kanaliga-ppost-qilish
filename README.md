@@ -1,64 +1,70 @@
-# AiPro — "Claude maslahatlar" avtomatik post boti
+# AiPro — avtomatik Telegram post boti
 
-Kuniga bir marta ishga tushadi, rasmiy manbadan yangi maslahat topadi,
-Sirojning stilida post yozadi, brend kartochkasi yasaydi, sifat nazoratidan
-o'tkazadi va **tasdiq so'raydi**. Siz "Chiqsin" bosgandan keyingina kanalga chiqadi.
+Kuniga 4 marta o'zi uyg'onadi, post yozadi, rasm yasaydi, tekshiradi va
+kanallarga chiqaradi. Tasdiq so'ramaydi (`AUTO_PUBLISH=1`), nusxasini
+Sirojning shaxsiy chatiga yuboradi.
 
-## Oqim
+## Jadval (Toshkent vaqti)
 
-```
-1. Mavzu izlash      Claude Help Center'ning 7 bo'limidan ~350 rasmiy maqola
-                     Arxivda bo'lganlari chiqarib tashlanadi, model bittasini tanlaydi
-2. Post yozish       Stil qo'llanmasi + 6 namuna post asosida
-3. Sifat nazorati    Har bir da'vo RASMIY MAQOLA MATNIGA qarshi tekshiriladi
-                     + kirill/emoji/uzunlik/paragraf mexanik tekshiruvi
-4. Rasm              Brend kartochkasi (bepul) yoki Gemini rasm (IMAGE_MODE=ai)
-5. Tasdiq            Shaxsiy chatga: Chiqsin / Qayta yoz / Bekor
-6. Chiqarish         Tasdiqlangach kanalga, manba arxivga yoziladi
-```
+| Soat | Slot | Qayerga | Nima |
+|------|------|---------|------|
+| 07:00 | `fact` | 4 vebinar kanali | qiziqarli fakt / dajim |
+| 10:00 | `value` | 4 vebinar kanali | kurs qiymati |
+| 12:00 | `main` | @Siroj_aiPro_Academy | xalqaro AI yangiligi |
+| 17:00 | `mini` | 5 kanal | mini kurs sotuv posti (tugma bilan) |
 
-## Nega Google Search ishlatilmaydi
+Jadval `.github/workflows/post.yml` da, UTC da yozilgan (Toshkent = UTC + 5).
 
-Google Search grounding pullik (billing kerak). Uning o'rniga bot to'g'ridan-to'g'ri
-`support.claude.com` dan o'qiydi. Bu aslida **ishonchliroq** — qidiruv tasodifiy
-blogga tushishi mumkin, bu esa faqat rasmiy hujjatni ko'radi. Va bepul.
+## Qayerda ishlaydi
 
-## Kerakli kalitlar (Railway -> Variables)
+**GitHub Actions** — bepul. Railway kerak emas.
+Har ishga tushganda yangi konteyner ochiladi, bitta post chiqaradi, o'chadi.
 
-| O'zgaruvchi | Qiymat |
-|---|---|
+Takrorlanmaslik tarixi (`data/funnel_history.json`) va ishlatilgan faktlar
+(`funnel/facts.json`) har safar repozitoriyga qaytarib yoziladi — shuning
+uchun bot ertaga nima yozganini eslab qoladi.
+
+## Kerakli Secrets
+
+`Settings → Secrets and variables → Actions → New repository secret`:
+
+| Nomi | Qiymat |
+|------|--------|
 | `TELEGRAM_TOKEN` | @BotFather bergan token |
 | `GEMINI_API_KEY` | aistudio.google.com dan (bepul limit yetarli) |
 | `CHANNEL_ID` | `@Siroj_aiPro_Academy` |
 | `ADMIN_CHAT_ID` | `5872633589` |
-| `DATA_DIR` | `/data` |
-| `IMAGE_MODE` | `card` (bepul) yoki `ai` (billing kerak) |
-| `APPROVAL_TIMEOUT_MIN` | `120` |
-| `BRAND_ACCENT` | `#E8FF59` |
+| `ELEVEN_API_KEY` | ElevenLabs (ovoz kerak bo'lmasa bo'sh qoldiring) |
 
-## Railway'ga o'rnatish
+## Qo'lda post chiqarish
 
-1. Papkani GitHub'ga private repo qilib yuklang.
-2. Railway -> **New** -> **Deploy from GitHub repo**.
-3. **Variables** -> yuqoridagi qiymatlarni kiriting.
-4. **Settings -> Volumes** -> yangi volume, mount path `/data`.
-5. **Settings -> Cron Schedule**: `0 4 * * *` (UTC) = Toshkent 09:00.
-6. **Settings -> Restart Policy**: `Never`.
+`Actions → AiPro post → Run workflow` → slotni tanlang → `Run workflow`.
 
-## Narx
+## Sozlamalar
 
-Bepul Gemini limitida ishlaydi. Railway cron rejimida kuniga ~10-15 daqiqa
-(+ tasdiq kutish) ishlaydi — oyiga $1 dan kam, trial $5 krediti bir necha oyga yetadi.
+| Fayl | Nima uchun |
+|------|-----------|
+| `funnel/campaign.json` | vebinar kanallari, menejer, o'qish sanasi |
+| `funnel/angles.json` | 37 ta burchak — postlar takrorlanmasligi uchun |
+| `funnel/main_channel.json` | asosiy kanal navbati, har 4-postda taklif |
+| `funnel/minikurs.json` | mini kurs: narx, joylar, tugma, 14 burchak |
+| `funnel/facts.json` | haqiqiy hikoyalar (faqat tekshirilganini yozing) |
+| `images/` | 24 ta illyustratsiya — plakat foni |
+| `style/` | yozish qoidalari va namuna postlar |
 
-## Stilni sozlash
+## Muhim qoidalar (kodga o'rnatilgan)
 
-- `style/style_guide.md` — yozish qoidalari
-- `style/examples/*.txt` — namuna postlar
+- Faqat o'zbek tili, lotin yozuvi — kirill bo'lsa post chiqmaydi
+- Katta kurs narxi hech qachon aytilmaydi
+- "oqim" so'zi taqiqlangan → "yangi guruh" / "o'qish boshlanadi"
+- Mini kurs postlarida: asboblar narxi va "pul uchun emas" gaplari taqiqlangan
+- Postlar oxirgi 25 ta postga 35% dan ko'p o'xshasa — qayta yoziladi
+- Rasmdagi matnni AI emas, `src/poster.py` chizadi (o' va g' toza chiqsin)
 
 ## Mahalliy sinov
 
 ```bash
 pip install -r requirements.txt
 export $(cat .env | xargs)
-python main.py
+python run.py main
 ```

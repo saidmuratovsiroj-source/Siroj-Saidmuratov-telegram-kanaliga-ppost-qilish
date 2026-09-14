@@ -10,6 +10,7 @@ Odam katta kurs kutib, keyin hafsalasi pir bo'lmasin.
 """
 import json
 import os
+from datetime import date, datetime
 
 import config
 
@@ -59,6 +60,11 @@ RAQAMLAR (faqat shular, boshqasini o'ylab topma):
 - Joylar: {seats} ta — tugagach yopiladi
 - Qabul: {open_days} kun ochiq
 
+QABUL HOLATI — POSTDAGI SHOSHILINCHLIK AYNAN SHUNGA MOS BO'LSIN:
+{urgency}
+
+KUN VAQTI: {daypart}
+
 BUGUNGI BURCHAK (faqat shu haqda yoz):
 {angle}
 
@@ -69,8 +75,12 @@ TUZILMA:
 1. Ilgak — shu burchakka tegishli aniq holat, savol yoki gap
 2. Mazmun — 4-8 qisqa qator
 3. Bir joyda ochiq aytiladi: bu MINI kurs, katta kurs emas
-4. Shoshilinchlik — joylar yoki muddat (burchakka qarab)
+4. SHOSHILINCHLIK — yuqoridagi "QABUL HOLATI" ohangida, MAJBURIY
 5. Oxirgi qator — pastdagi tugmaga ishora
+
+HAR POSTDA odam "keyinroq qarayman" deb qo'ya olmasligi kerak.
+Kechiktirishning narxi aniq ko'rinsin: joy tugaydi yoki qabul yopiladi.
+Lekin qo'rqitma va yolg'on raqam aytma — faqat brifdagi raqamlar.
 
 Uzunligi 500-800 belgi. Havola yozma.
 
@@ -91,30 +101,73 @@ def button(brief) -> list:
     return [[{"text": brief["button_text"], "url": brief["bot"]}]]
 
 
-def build(gem):
-    """(post, meta) qaytaradi."""
+def days_left(b) -> int:
+    """Qabul tugashiga necha kun qoldi. Sana berilmagan bo'lsa — to'liq muddat."""
+    start = b.get("start_date")
+    if not start:
+        return b.get("open_days", 7)
+    try:
+        d0 = date.fromisoformat(start)
+    except Exception:
+        return b.get("open_days", 7)
+    gone = (datetime.now(config.TZ).date() - d0).days
+    return max(0, b.get("open_days", 7) - gone)
+
+
+def urgency_text(b) -> tuple:
+    """(matn, bosqich) — qolgan kunga qarab shoshilinchlik ohangi."""
+    left = days_left(b)
+    if left <= 0:
+        return ("QABUL YOPILDI deb yozma. Bugun — eng oxirgi imkoniyat. "
+                "Qisqa, qat'iy, ortiqcha gapsiz. Ertaga kech bo'lishini ayt.", "oxirgi")
+    if left == 1:
+        return (f"Qabulga BIR KUN qoldi. Bu — oxirgi kun. Ohang qat'iy va qisqa. "
+                f"Joylar {b['seats']} ta edi, tugab bormoqda.", "1kun")
+    if left <= 3:
+        return (f"Qabul tugashiga {left} kun qoldi. Joylar tugab bormoqda. "
+                f"Ohang tig'iz — kechiktirgan ulgurmaydi.", "sanoq")
+    return (f"Qabul {left} kun ochiq, jami {b['seats']} ta joy. Ohang tinch, "
+            f"lekin oxirida aniq turtki bo'lsin: joy cheklangan, keyin yopiladi.", "ochiq")
+
+
+DAYPARTS = {
+    "fact": "Ertalab. Odam endi kunni boshlayapti — ilgak tetik va qisqa bo'lsin.",
+    "value": "Tushdan oldin. Ish orasidagi tanaffus — o'ylantiradigan savol yaxshi ishlaydi.",
+    "main": "Tushlik payti. Lentani varaqlayotgan odam — ilgak birinchi qatordayoq ushlasin.",
+    "mini": "Kechqurun. Uy ishlari tugagan, bolalar uxlagan payt — tinchroq, samimiyroq.",
+    "closing": "Kechqurun, yopilish posti — eng qat'iy ohang.",
+}
+
+
+def build(gem, slot="mini"):
+    """(post, meta) qaytaradi. slot — kun vaqtini belgilaydi."""
     from src import history
     b = load_brief()
     a = history.pick_angle("mini", b["angles"])
     angle = a["angle"] if a else b["angles"][0]["angle"]
-    print(f"[minikurs] burchak: {a['id'] if a else '—'} — {angle[:60]}")
+    urg, stage = urgency_text(b)
+    left = days_left(b)
+    print(f"[minikurs] burchak: {a['id'] if a else '—'} | qolgan: {left} kun | "
+          f"bosqich: {stage} | slot: {slot}")
 
     prompt = PROMPT.format(
         name=b["name"], what=b["what_it_is"], not_included=b["not_included"],
         why=b["why"], price=b["price"], seats=b["seats"],
-        open_days=b["open_days"], angle=angle,
+        open_days=b["open_days"], angle=angle, urgency=urg,
+        daypart=DAYPARTS.get(slot, DAYPARTS["mini"]),
         recent=history.recent_text(8))
 
     post = gem.json(config.MODEL_WRITER, prompt, system=SYSTEM, temperature=0.95)
     post["caption"] = _strip_links(post.get("caption", ""))
 
+    tail = f"{left} kun qoldi" if left > 0 else "oxirgi kun"
     meta = {
         "slot": "mini",
         "angle_id": a["id"] if a else "",
         "kicker": "MINI KURS",
         "image_big": post.get("image_big") or "Mini kurs",
         "image_small": post.get("image_small") or f"{b['price']} · {b['seats']} ta joy",
-        "lines": [b["price"], f"{b['seats']} ta joy", f"{b['open_days']} kun"],
+        "lines": [b["price"], f"{b['seats']} ta joy", tail],
     }
     return post, meta
 

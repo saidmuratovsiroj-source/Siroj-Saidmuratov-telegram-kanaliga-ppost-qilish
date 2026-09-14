@@ -1,0 +1,73 @@
+name: Yopiq kanal — salomlashish posti
+
+# Bir martalik post: mini kurs yopiq kanaliga qo'yiladigan kirish/salomlashish.
+# Faqat Sirojning shaxsiy chatiga yuboriladi — u yerdan nusxa olib,
+# yopiq kanalga o'zi joylaydi va pin qiladi.
+# Hech qanday kanalga o'zi chiqmaydi.
+
+on:
+  workflow_dispatch:
+
+jobs:
+  salom:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Kutubxonalar
+        run: pip install -r requirements.txt
+
+      - name: Salomlashish postini yuborish
+        env:
+          TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          CHANNEL_ID:     ${{ secrets.CHANNEL_ID }}
+          ADMIN_CHAT_ID:  ${{ secrets.ADMIN_CHAT_ID }}
+          PYTHONUNBUFFERED: "1"
+        run: |
+          python - <<'PY'
+          import config
+          from src.telegram import Telegram
+          from src import poster, pool
+
+          CAPTION = """Xush kelibsiz! \U0001F3AC
+
+          Siz <b>AI Video Creator</b> mini kursining yopiq kanalidasiz.
+
+          Darslar tayyor turibdi — kutib o'tirmaysiz. Hammasi shu yerda, boshidan oxirigacha. Istagan vaqtingizda ko'rasiz: kechqurun, bolalar uxlagach yoki dam olish kunida.
+
+          <b>Qanday o'tasiz:</b>
+
+          1-darsdan boshlang va tartib bilan yuring. Har darsni ko'rgach, darhol o'zingiz takrorlang. Faqat tomosha qilish yetmaydi — qo'l bilan qilganda o'rganiladi.
+
+          Kurs oxirida qo'lingizda tayyor reklama roligi bo'ladi. O'zingiz yasagan.
+
+          Bitta ogohlantirish: birinchi videongiz mukammal chiqmaydi. Chiqishi shart ham emas. Muhimi — uni oxirigacha yasab ko'rish. Ikkinchisi allaqachon osonroq bo'ladi.
+
+          Savolingiz bo'lsa — @aiprokurs ga yozing.
+
+          Boshladik. \U0001F525"""
+
+          cap = "\n".join(line.strip() for line in CAPTION.split("\n"))
+
+          img = poster.make_mini(
+              big="Xush kelibsiz",
+              small="AI Video Creator — yopiq kanal",
+              kicker="MINI KURS",
+              lines=["Darslar tayyor", "Boshidan boshlang"],
+              cta="", seed=7, illustration=pool.pick(20))
+
+          head = ("<i>SALOMLASHISH POSTI — namuna, hech qayerga chiqmadi.\n"
+                  "Yoqsa: rasmni va matnni yopiq kanalga qo'ying va pin qiling.</i>\n"
+                  "— — — — —\n")
+
+          tg = Telegram(config.TELEGRAM_TOKEN)
+          print(f"Bot: @{tg.me()['username']} | uzunlik: {len(cap)} belgi")
+          tg.send_photo(config.ADMIN_CHAT_ID, img, head + cap)
+          print("✅ Shaxsiy chatga yuborildi.")
+          PY

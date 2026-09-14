@@ -39,16 +39,19 @@ def log(msg):
 
 
 # ------------------------------------------------------------- yordamchilar
-def _mech_check(cap: str):
+def _mech_check(cap: str, allow_price: bool = False):
+    """allow_price — MINI KURS postlari uchun. U yerda narx aytilishi SHART
+    (99 000 so'm). Katta kurs postlarida esa narx umuman tilga olinmaydi."""
     if not cap:
         return "Post bo'sh"
     if re.search(r"[Ѐ-ӿ]", cap):
         return "Matnda kirill harflari bor — faqat lotin yozuvida yoz"
     if len(cap) > config.CAPTION_LIMIT:
         return f"Uzunlik {len(cap)} > {config.CAPTION_LIMIT} — qisqartir"
-    for w in ("so'm", "dollar kurs", "narxi", "chegirma", "aksiya narx"):
-        if w in cap.lower():
-            return "Narx haqida gapirilgan — narxni umuman tilga olma"
+    if not allow_price:
+        for w in ("so'm", "dollar kurs", "narxi", "chegirma", "aksiya narx"):
+            if w in cap.lower():
+                return "Narx haqida gapirilgan — narxni umuman tilga olma"
     if re.search(r"\boqim", cap, re.I):
         return "'oqim' so'zi ishlatilgan — 'yangi guruh' yoki 'o'qish boshlanadi' deb yoz"
     if re.search(r"(ertaga|bugun|indinga)[^.\n]{0,20}\d{1,2}[:.]\d{2}", cap, re.I):
@@ -256,7 +259,7 @@ def run_mini(tg, gem, slot="mini"):
         cap = (post.get("caption") or "").strip()
         log(f"Post yozildi ({len(cap)} belgi), burchak={meta['angle_id']}")
 
-        bad = _mech_check(cap) or minikurs.forbidden(cap)
+        bad = _mech_check(cap, allow_price=True) or minikurs.forbidden(cap, b)
         if bad:
             log(f"Tekshiruv: {bad} — qayta yozamiz")
             continue

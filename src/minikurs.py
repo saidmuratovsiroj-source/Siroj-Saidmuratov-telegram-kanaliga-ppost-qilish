@@ -180,12 +180,23 @@ BANNED = [
 ]
 
 
-def forbidden(cap: str) -> str:
+def forbidden(cap: str, brief=None) -> str:
     """Taqiqlangan ibora bormi. Bo'lsa sababni qaytaradi."""
+    import re
     low = cap.lower()
     for w in BANNED:
         if w in low:
             return f"Taqiqlangan ibora: \"{w}\""
+
+    # Mini kurs postida narx aytiladi — LEKIN faqat brifdagi narx.
+    # Katta kurs narxi yoki o'ylab topilgan summa chiqib qolmasin.
+    if brief:
+        ok = re.sub(r"\D", "", brief.get("price", ""))
+        for m in re.findall(r"([\d\s '’.,]{3,})\s*so['’`ʻ]?m", low):
+            digits = re.sub(r"\D", "", m)
+            if digits and ok and digits != ok:
+                return (f"Noto'g'ri summa: {m.strip()} so'm — "
+                        f"faqat {brief['price']} aytiladi")
     return ""
 
 

@@ -24,7 +24,7 @@ from datetime import date, datetime
 import config
 from src.telegram import Telegram
 from src.gemini import Gemini
-from src import funnel, history, poster, pool, queue, reactions, voice
+from src import funnel, history, minikurs, poster, pool, queue, reactions, voice
 
 BTN = [[{"text": "✅ Chiqsin", "callback_data": "post:publish"},
         {"text": "🔄 Qayta yoz", "callback_data": "post:rewrite"},
@@ -239,6 +239,73 @@ def publish_queued(tg):
                     f"🌅 Ertalabki post {len(posted)}/{len(chans)} kanalga chiqdi.")
 
 
+# --------------------------------------------------------------- mini kurs
+def run_mini(tg, gem):
+    """Mini kurs sotuv posti — 5 kanalga, pastda to'lov tugmasi bilan."""
+    b = minikurs.load_brief()
+    if not b.get("active"):
+        log("Mini kurs kampaniyasi yopiq — 'closing' postiga o'tamiz.")
+        return run_funnel(tg, gem, "closing", mode="now")
+
+    chans = b["channels"]
+    log(f"Mini kurs: {len(chans)} kanal | {b['price']} | {b['seats']} joy")
+
+    for attempt in range(1, config.MAX_REWRITES + 1):
+        post, meta = minikurs.build(gem)
+        cap = (post.get("caption") or "").strip()
+        log(f"Post yozildi ({len(cap)} belgi), burchak={meta['angle_id']}")
+
+        bad = _mech_check(cap) or minikurs.forbidden(cap)
+        if bad:
+            log(f"Tekshiruv: {bad} — qayta yozamiz")
+            continue
+        sim = history.similarity(cap)
+        if sim >= config.SIMILARITY_LIMIT and attempt < config.MAX_REWRITES:
+            log(f"Oldingi postga juda o'xshash ({sim:.0%}) — qayta yozamiz")
+            continue
+        same_hook = history.opening_repeats(cap)
+        if same_hook and attempt < config.MAX_REWRITES:
+            log(f"{same_hook} — qayta yozamiz")
+            continue
+        log(f"O'xshashlik: {sim:.0%}")
+
+        seed = abs(hash(cap)) % 9999
+        image = poster.make_mini(
+            big=meta["image_big"], small=meta["image_small"],
+            kicker=meta["kicker"], lines=meta["lines"],
+            cta=b["bot"].split("/")[-1], seed=seed,
+            illustration=pool.pick(seed))
+
+        btn = minikurs.button(b)
+        audio, akind = voice.make(post.get("audio") or "")
+
+        ok = []
+        for chan in chans:
+            try:
+                tg.send_photo(chan["id"], image, cap, buttons=btn)
+                ok.append(chan["title"])
+                log(f"✅ {chan['title']}")
+                if audio:
+                    try:
+                        tg.send_voice(chan["id"], audio, akind)
+                    except Exception as e:
+                        log(f"   ovoz yuborilmadi ({chan['title']}): {e}")
+            except Exception as e:
+                log(f"❌ {chan['title']}: {e}")
+
+        history.add("mini", meta["angle_id"], cap)
+        note = (f"📤 <b>Mini kurs posti chiqdi</b> · {len(ok)}/{len(chans)} kanal · "
+                f"burchak: {meta['angle_id']}\nYoqmasa ayting — o'chiraman.\n— — — — —\n")
+        try:
+            tg.send_photo(config.ADMIN_CHAT_ID, image, note + cap, buttons=btn)
+        except Exception as e:
+            log(f"nusxa yuborilmadi: {e}")
+        return
+
+    tg.send_message(config.ADMIN_CHAT_ID,
+                    "🔄 Mini kurs posti filtrdan o'tmadi. Chiqmadi.")
+
+
 # ---------------------------------------------------------------- asosiy
 def main():
     slot = sys.argv[1] if len(sys.argv) > 1 else \
@@ -269,7 +336,9 @@ def main():
     tg.drain()
     gem = Gemini(config.GEMINI_API_KEY)
 
-    if slot in ("main", "claude"):
+    if slot == "mini":
+        run_mini(tg, gem)
+    elif slot in ("main", "claude"):
         import main as main_channel
         main_channel.main()
     elif slot == "prepare":

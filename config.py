@@ -87,7 +87,8 @@ FUNNEL_TIMEOUT_MIN = int(os.getenv("FUNNEL_TIMEOUT_MIN", "90"))
 #   17 -> closing: vebinar kanallariga
 # AUTO_PUBLISH=1 bo'lsa hammasi so'ramasdan chiqadi.
 # Railway cron (UTC):  0 2,5,7,12 * * *
-SCHEDULE = {7: "fact", 10: "value", 12: "main", 17: "closing"}
+#   17 -> mini  : MINI KURS sotuv posti (funnel/minikurs.json active bo'lsa)
+SCHEDULE = {7: "fact", 10: "value", 12: "main", 17: "mini"}
 
 # --- Tasdiq ---
 # AUTO_PUBLISH=1 bo'lsa bot tugma so'ramaydi — postni o'zi chiqaradi va

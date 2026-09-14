@@ -1,0 +1,99 @@
+{
+  "active": true,
+  "name": "AI Video Creator — mini kurs",
+  "price": "99 000 so'm",
+  "seats": 100,
+  "open_days": 7,
+  "bot": "https://t.me/AIminikurs_academy_bot",
+  "button_text": "🎬 Mini kursga yozilish — 99 000 so'm",
+  "_izoh": "Kanallar: 4 ta vebinar kanali + asosiy kanal. Post hammasiga bir xil chiqadi.",
+  "channels": [
+    {
+      "title": "10-11-12 AVGUST",
+      "id": -1004470492324
+    },
+    {
+      "title": "23-24 IYUL — Amerika YouTube",
+      "id": -1004486131838
+    },
+    {
+      "title": "18-19 IYUN",
+      "id": -1003952271811
+    },
+    {
+      "title": "2-3 IYUL",
+      "id": -1004402719676
+    },
+    {
+      "title": "@Siroj_aiPro_Academy",
+      "id": "@Siroj_aiPro_Academy"
+    }
+  ],
+  "why": "Sirojga direktda ko'p odam yozadi: video yaratishni o'rganmoqchiman. Shu so'rovlar uchun alohida kichik kurs tayyorlandi.",
+  "what_it_is": "Sun'iy intellekt bilan o'z reklama rolikingizni yasashni o'rganish. Yozib olingan darslar, yopiq Telegram kanalda. To'lagan odam darhol hammasini oladi.",
+  "not_included": "Bu KATTA KURS EMAS. Kichik kurs — bitta ko'nikma, bitta natija.",
+  "angles": [
+    {
+      "id": "m-javob",
+      "angle": "Asl sabab: direktga kelayotgan 'pulim yetmayapti' xabarlari. Mini kurs — shularga javob. Eng birinchi post shu bo'lishi kerak."
+    },
+    {
+      "id": "m-nima",
+      "angle": "Mini kurs nima va nima EMAS. Ochiq tushuntirish: bu katta kurs emas, bitta ko'nikma."
+    },
+    {
+      "id": "m-natija",
+      "angle": "Yakuniy natija: kurs oxirida qo'lingizda tayyor reklama roligi bo'ladi. Ko'rsatadigan, yuboradigan narsa."
+    },
+    {
+      "id": "m-kamera",
+      "angle": "Kamera, aktyor, studiya kerak emas. Telefon va sun'iy intellekt yetadi."
+    },
+    {
+      "id": "m-kimga",
+      "angle": "Kimga: do'kon, kafe, xizmat egalari; o'z sahifasini yuritayotganlar; video yasashni xohlaganlar."
+    },
+    {
+      "id": "m-joy",
+      "angle": "100 ta joy — chunki har birining ishi ko'rib chiqiladi. Tugagach yopiladi."
+    },
+    {
+      "id": "m-muddat",
+      "angle": "Qabul 7 kun. Muddat tugagach yopiladi, keyingisini kutish kerak."
+    },
+    {
+      "id": "m-vaqt",
+      "angle": "Darslar yozib olingan. Istagan vaqtda ko'rasiz — kechqurun, bolalar uxlagach, dam olish kunida."
+    },
+    {
+      "id": "m-qorquv",
+      "angle": "Texnikani bilmayman degan qo'rquv. Darslar noldan, qadam-baqadam. Kompyuter ham shart emas."
+    },
+    {
+      "id": "m-keyin",
+      "angle": "Bittasini yasay olsangiz, ikkinchisi osonroq. Ko'nikma qoladi, video emas."
+    },
+    {
+      "id": "m-solishtir",
+      "angle": "Bitta reklama roligini buyurtma qilish qancha turadi va o'zi yasash qancha. Taqqoslash."
+    },
+    {
+      "id": "m-oxirgi",
+      "angle": "Oxirgi chaqiruv: joylar tugayapti yoki muddat bitmoqda. Qisqa, qat'iy."
+    },
+    {
+      "id": "m-oson",
+      "angle": "Darslar noldan, qadam-baqadam. Murakkab atama yo'q, texnik bilim talab qilinmaydi."
+    },
+    {
+      "id": "m-qisqa",
+      "angle": "Ko'p vaqt olmaydi. Darslar qisqa — bir kunda ko'rib chiqish mumkin."
+    }
+  ],
+  "banned": [
+    "Asboblar bepul yoki pullik ekani — UMUMAN gapirilmaydi",
+    "\"Bu kurs pul yig'ish uchun emas\" kabi gaplar — TAQIQLANGAN",
+    "Sirojning shaxsiy moliyaviy niyati haqida gap — TAQIQLANGAN",
+    "Qo'shimcha xarajat bor-yo'qligi haqida va'da — TAQIQLANGAN"
+  ]
+}

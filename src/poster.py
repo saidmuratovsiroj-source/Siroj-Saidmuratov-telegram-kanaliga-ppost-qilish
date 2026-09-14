@@ -31,6 +31,7 @@ MINT = (122, 197, 164)
 LILAC = (150, 138, 204)
 BLUE = (110, 158, 214)
 PEACH = (214, 148, 112)
+CORAL = (230, 98, 80)          # faqat MINI KURS uchun — boshqa postlardan ajralib tursin
 ACCENTS = [MINT, LILAC, BLUE, PEACH]
 
 GF = "/usr/share/fonts/truetype/google-fonts"
@@ -125,8 +126,12 @@ def _centered(d, lines, font, y, fill, leading=1.28):
 ART_SCALE = 0.74   # personaj kvadratning qancha qismini egallaydi
 
 
-def _base(illustration):
-    """Oq lavha + personaj pastda. Yuqorisi matn uchun toza oq qoladi."""
+def _base(illustration, solid_until: int = None):
+    """Oq lavha + personaj pastda.
+
+    solid_until — matn qayerda tugaydi (piksel). Sarlavha uzun bo'lsa personaj
+    kichrayadi va pastroqqa suriladi — boshi kesilib qolmaydi.
+    """
     canvas = Image.new("RGB", (W, H), PAPER)
     if not illustration:
         return canvas
@@ -135,21 +140,25 @@ def _base(illustration):
     except Exception as e:
         print(f"[poster] illyustratsiya ochilmadi ({e}) — faqat oq fon")
         return canvas
-    side = int(W * ART_SCALE)
+
+    top = max(int(H * 0.34), int(solid_until or 0))
+    side = min(int(W * ART_SCALE), H - top)
+    side = max(side, int(W * 0.45))          # juda kichrayib ketmasin
+    top = min(top, H - side)                  # personaj boshi kesilmasin
+
     im = im.resize((side, side), Image.LANCZOS)
-    # Fonning och-kulrang joylarini toza oqqa aylantiramiz — chetlarida
-    # to'rtburchak izi qolmasin
+    # Fonning och-kulrang joylarini toza oqqa aylantiramiz
     im = im.point(lambda v: 255 if v >= 242 else int(v * 1.02))
     canvas.paste(im, ((W - side) // 2, H - side))
 
-    # Yumshoq oq parda: matn zonasi har doim toza bo'lsin
+    # Yumshoq oq parda — faqat personaj boshlangan joygacha
     veil = Image.new("RGBA", (W, H), (0, 0, 0, 0))
     vd = ImageDraw.Draw(veil)
-    solid, fade = int(H * 0.34), int(H * 0.46)
-    vd.rectangle([0, 0, W, solid], fill=PAPER + (255,))
-    for y in range(solid, fade):
-        t = 1 - (y - solid) / (fade - solid)
-        vd.line([(0, y), (W, y)], fill=PAPER + (int(255 * t),))
+    fade = min(top + int(H * 0.08), H)
+    vd.rectangle([0, 0, W, top], fill=PAPER + (255,))
+    for y in range(top, fade):
+        t = 1 - (y - top) / max(1, fade - top)
+        vd.line([(0, y), (W, y)], fill=PAPER + (int(200 * t),))
     return Image.alpha_composite(canvas.convert("RGBA"), veil).convert("RGB")
 
 
@@ -167,6 +176,12 @@ def _chrome(d, brand, handle):
 def _rule(d, y, accent, width=96):
     d.rounded_rectangle([(W - width) // 2, y, (W + width) // 2, y + 5],
                         radius=3, fill=accent)
+
+
+def _measure(fn) -> int:
+    """Matn blokining pastki chegarasini o'lchaydi (chizmasdan)."""
+    probe = Image.new("RGB", (W, H), PAPER)
+    return fn(ImageDraw.Draw(probe))
 
 
 # ---------------------------------------------------------------- asosiy
@@ -198,35 +213,49 @@ def make_stat_poster(big, small="", note="", kicker="", lines=None, cta="", seed
                      illustration=None):
     """Vebinar posti: rubrika + katta sarlavha + bitta qatorli mazmun."""
     accent = ACCENTS[seed % len(ACCENTS)]
-    canvas = _base(illustration)
+
+    def draw_text(d, paint=True):
+        y = 146
+        if kicker:
+            if paint:
+                _tracked(d, clean(kicker).upper(), _font(F_MED, 24), y, accent, track=7)
+            y += 44
+            if paint:
+                _rule(d, y, accent)
+            y += 38
+        f, blines = _fit(d, clean(big), F_BOLD, TEXT_W, max_lines=2, start=84)
+        if paint:
+            y = _centered(d, blines, f, y, INK) + 6
+        else:
+            y += int(f.size * 1.28) * len(blines) + 6
+        if small:
+            fs = _font(F_LIGHT, 34)
+            rows = _wrap(d, clean(small), fs, TEXT_W - 60)[:2]
+            if paint:
+                y = _centered(d, rows, fs, y, GREY) + 14
+            else:
+                y += int(fs.size * 1.28) * len(rows) + 14
+        items = [clean(x) for x in (lines or []) if clean(x)]
+        if items:
+            fl = _font(F_REG, 26)
+            rows = _wrap(d, "  ·  ".join(items[:3]), fl, TEXT_W - 60)[:2]
+            if paint:
+                y = _centered(d, rows, fl, y, INK, leading=1.45) + 10
+            else:
+                y += int(fl.size * 1.45) * len(rows) + 10
+        if note:
+            fn = _font(F_LIGHT, 26)
+            rows = _wrap(d, clean(note), fn, TEXT_W - 80)[:1]
+            if paint:
+                _centered(d, rows, fn, y, GREY)
+            y += int(fn.size * 1.28) * len(rows)
+        return y
+
+    bottom = _measure(lambda d: draw_text(d, paint=False))
+    canvas = _base(illustration, solid_until=bottom + 24)
     d = ImageDraw.Draw(canvas)
-
     _chrome(d, "AI PRO ACADEMY", cta)
-
-    y = 146
-    if kicker:
-        _tracked(d, clean(kicker).upper(), _font(F_MED, 24), y, accent, track=7)
-        y += 44
-        _rule(d, y, accent)
-        y += 38
-
-    f, blines = _fit(d, clean(big), F_BOLD, TEXT_W, max_lines=2, start=84)
-    y = _centered(d, blines, f, y, INK) + 6
-
-    if small:
-        fs = _font(F_LIGHT, 34)
-        y = _centered(d, _wrap(d, clean(small), fs, TEXT_W - 60)[:2], fs, y, GREY) + 14
-
-    items = [clean(x) for x in (lines or []) if clean(x)]
-    if items:
-        fl = _font(F_REG, 26)
-        joined = "  ·  ".join(items[:3])
-        rows = _wrap(d, joined, fl, TEXT_W - 60)[:2]
-        y = _centered(d, rows, fl, y, INK, leading=1.45) + 10
-
-    if note:
-        fn = _font(F_LIGHT, 26)
-        _centered(d, _wrap(d, clean(note), fn, TEXT_W - 80)[:1], fn, y, GREY)
+    draw_text(d, paint=True)
     return _png(canvas)
 
 
@@ -242,3 +271,22 @@ if __name__ == "__main__":
                     note="Excel, Word, PDF — suhbatning o'zida",
                     cta="@Siroj_aiPro_Academy", seed=0))
     print("poster.png yozildi")
+
+
+# ---------------------------------------------------------------- mini kurs
+def make_mini(big, small="", kicker="Mini kurs", lines=None, cta="", seed=0,
+              illustration=None):
+    """Mini kurs posti — oddiy postlardan ajralib tursin uchun marjon rang.
+
+    Uslub bir xil (oq fon, 3D personaj, Poppins), faqat urg'u rangi boshqa.
+    Odam lentada ko'rib darhol "bu mini kurs" deb tanib oladi.
+    """
+    global ACCENTS
+    saved = ACCENTS
+    ACCENTS = [CORAL]
+    try:
+        return make_stat_poster(big, small=small, note="", kicker=kicker,
+                                lines=lines, cta=cta, seed=seed,
+                                illustration=illustration)
+    finally:
+        ACCENTS = saved

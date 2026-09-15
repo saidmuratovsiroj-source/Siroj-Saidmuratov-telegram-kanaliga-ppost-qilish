@@ -63,13 +63,20 @@ RAQAMLAR (faqat shular, boshqasini o'ylab topma):
 QABUL HOLATI — POSTDAGI SHOSHILINCHLIK AYNAN SHUNGA MOS BO'LSIN:
 {urgency}
 
-KUN VAQTI: {daypart}
+KUN VAQTI — faqat OHANG uchun. Bu izohdagi so'zlarni postga KO'CHIRMA:
+{daypart}
 
 BUGUNGI BURCHAK (faqat shu haqda yoz):
 {angle}
 
-OXIRGI CHIQQAN POSTLAR — ILGAKNI HAM, MAZMUNNI HAM TAKRORLAMA:
+OXIRGI CHIQQAN POSTLAR — BULARNI O'QIB CHIQ:
 {recent}
+
+ENG QAT'IY QOIDA: birinchi qator yuqoridagi postlarning birortasiga ham
+o'xshamasin. Bir xil manzara bilan boshlash TAQIQLANGAN — kun tartibi,
+uy-ro'zg'or manzarasi, telefon qo'lga olish kabi ilgaklar takrorlangan.
+Bu safar butunlay boshqa joydan kir: to'g'ridan-to'g'ri savol, bitta qisqa
+gap, raqam, qarama-qarshilik yoki aniq hayotiy holat.
 
 TUZILMA:
 1. Ilgak — shu burchakka tegishli aniq holat, savol yoki gap
@@ -130,12 +137,16 @@ def urgency_text(b) -> tuple:
             f"lekin oxirida aniq turtki bo'lsin: joy cheklangan, keyin yopiladi.", "ochiq")
 
 
+# DIQQAT: bu izohlar faqat OHANGNI belgilaydi. Ilgari bu yerda "bolalar
+# uxlagan payt" degan tasvir bor edi va model uni har postning birinchi
+# qatoriga ko'chirib yozaverdi. Shuning uchun endi bu yerda ko'chirib
+# bo'ladigan manzara yo'q — faqat ohang aytiladi.
 DAYPARTS = {
-    "fact": "Ertalab. Odam endi kunni boshlayapti — ilgak tetik va qisqa bo'lsin.",
-    "value": "Tushdan oldin. Ish orasidagi tanaffus — o'ylantiradigan savol yaxshi ishlaydi.",
-    "main": "Tushlik payti. Lentani varaqlayotgan odam — ilgak birinchi qatordayoq ushlasin.",
-    "mini": "Kechqurun. Uy ishlari tugagan, bolalar uxlagan payt — tinchroq, samimiyroq.",
-    "closing": "Kechqurun, yopilish posti — eng qat'iy ohang.",
+    "fact": "Ertalab o'qiladi. Ohang tetik, ilgak qisqa.",
+    "value": "Tushdan oldin o'qiladi. O'ylantiradigan savol yaxshi ishlaydi.",
+    "main": "Tushlik payti lentada ko'riladi. Birinchi qatorning o'zi ushlab olsin.",
+    "mini": "Kechqurun o'qiladi. Ohang tinchroq va samimiyroq.",
+    "closing": "Yopilish posti. Ohang eng qat'iy, gap kam.",
 }
 
 

@@ -95,7 +95,8 @@ SCHEDULE = {7: "fact", 12: "main", 17: "mini"}
 # Sirojga nusxasini yuboradi ("chiqdi" xabari bilan). Siroj ulgurmayotgani uchun.
 AUTO_PUBLISH = os.getenv("AUTO_PUBLISH", "1") == "1"
 APPROVAL_TIMEOUT_MIN = int(os.getenv("APPROVAL_TIMEOUT_MIN", "120"))
-MAX_REWRITES = int(os.getenv("MAX_REWRITES", "4"))
+# Takror post umuman chiqmaydi, shuning uchun urinish ko'proq berilgan.
+MAX_REWRITES = int(os.getenv("MAX_REWRITES", "6"))
 
 # --- Sifat nazorati ---
 QC_MAX_ATTEMPTS = 2

@@ -140,12 +140,13 @@ def run_funnel(tg, gem, slot, mode="now"):
             log(f"Mexanik tekshiruv: {bad} — qayta yozamiz")
             continue
 
+        # Takror post chiqmasin — oxirgi urinishda ham yon yo'l yo'q.
         sim = history.similarity(cap)
-        if sim >= config.SIMILARITY_LIMIT and attempt < config.MAX_REWRITES:
+        same_hook = history.opening_repeats(cap)
+        if sim >= config.SIMILARITY_LIMIT:
             log(f"Oldingi postga juda o'xshash ({sim:.0%}) — qayta yozamiz")
             continue
-        same_hook = history.opening_repeats(cap)
-        if same_hook and attempt < config.MAX_REWRITES:
+        if same_hook:
             log(f"{same_hook} — qayta yozamiz")
             continue
         log(f"Oldingi postlarga o'xshashlik: {sim:.0%}")
@@ -263,12 +264,16 @@ def run_mini(tg, gem, slot="mini"):
         if bad:
             log(f"Tekshiruv: {bad} — qayta yozamiz")
             continue
+        # MUHIM: bu tekshiruvda "oxirgi urinish" degan yon yo'l YO'Q.
+        # Avval oxirgi urinishda takror post ham chiqib ketardi — 14-sentabrda
+        # ikkita post bir xil ilgak bilan chiqqani shundan edi.
+        # Endi qoida oddiy: takror bo'lsa POST CHIQMAYDI.
         sim = history.similarity(cap)
-        if sim >= config.SIMILARITY_LIMIT and attempt < config.MAX_REWRITES:
+        same_hook = history.opening_repeats(cap)
+        if sim >= config.SIMILARITY_LIMIT:
             log(f"Oldingi postga juda o'xshash ({sim:.0%}) — qayta yozamiz")
             continue
-        same_hook = history.opening_repeats(cap)
-        if same_hook and attempt < config.MAX_REWRITES:
+        if same_hook:
             log(f"{same_hook} — qayta yozamiz")
             continue
         log(f"O'xshashlik: {sim:.0%}")

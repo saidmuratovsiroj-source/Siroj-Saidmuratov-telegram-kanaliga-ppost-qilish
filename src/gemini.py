@@ -8,29 +8,58 @@ import requests
 BASE = "https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent"
 RETRY_CODES = (429, 500, 502, 503, 504)
 
+# Asosiy model band bo'lsa (503 "high demand") shu ro'yxat bo'yicha pastga
+# tushamiz. Post chiqmay qolgandan ko'ra zaxira modelda chiqqani yaxshi.
+FALLBACKS = {
+    "gemini-3.5-flash": ["gemini-3.1-flash", "gemini-3.1-flash-lite"],
+    "gemini-3.1-flash": ["gemini-3.1-flash-lite"],
+}
+
 
 class Gemini:
     def __init__(self, api_key: str):
         self.key = api_key
 
-    def _post(self, model: str, body: dict, tries: int = 3) -> dict:
+    def _once(self, model: str, body: dict, tries: int = 4):
+        """(javob, xato) — bitta model bo'yicha urinadi."""
         last = None
         for attempt in range(1, tries + 1):
-            r = requests.post(
-                BASE.format(model=model),
-                headers={"x-goog-api-key": self.key, "Content-Type": "application/json"},
-                json=body, timeout=180,
-            )
+            try:
+                r = requests.post(
+                    BASE.format(model=model),
+                    headers={"x-goog-api-key": self.key,
+                             "Content-Type": "application/json"},
+                    json=body, timeout=180,
+                )
+            except Exception as e:
+                last = f"tarmoq xatosi: {type(e).__name__}"
+                if attempt < tries:
+                    time.sleep(5 * attempt)
+                    continue
+                break
             if r.status_code < 400:
-                return r.json()
-            last = f"{r.status_code}: {r.text[:400]}"
+                return r.json(), None
+            last = f"{r.status_code}: {r.text[:300]}"
             if r.status_code in RETRY_CODES and attempt < tries:
-                wait = 5 * attempt
+                wait = 8 * attempt          # 8s, 16s, 24s — band model bo'shashiga vaqt
                 print(f"[gemini] {model} {r.status_code} — {wait}s kutib qayta urinamiz")
                 time.sleep(wait)
                 continue
             break
-        raise RuntimeError(f"Gemini {model} xato {last}")
+        return None, last
+
+    def _post(self, model: str, body: dict, tries: int = 4) -> dict:
+        data, err = self._once(model, body, tries)
+        if data is not None:
+            return data
+        for spare in FALLBACKS.get(model, []):
+            print(f"[gemini] {model} javob bermadi ({err}) — {spare} ga o'tamiz")
+            data, err2 = self._once(spare, body, tries=2)
+            if data is not None:
+                print(f"[gemini] {spare} ishladi")
+                return data
+            err = err2 or err
+        raise RuntimeError(f"Gemini {model} xato {err}")
 
     # ---------- matn ----------
     def text(self, model: str, prompt: str, system: str = None,

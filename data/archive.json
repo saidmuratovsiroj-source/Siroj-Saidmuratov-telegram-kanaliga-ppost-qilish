@@ -40,5 +40,12 @@
     "level": "tool",
     "summary": "VPN va chet el raqamlarisiz ishlatish mumkinligini bilarmidingiz? 👀\n\nYaqinda bir muhim yangilikni o'qib qoldim. 💡\n\nKo'pchilik <b>Claude</b> dasturini chet elda ",
     "source_url": "https://support.claude.com/en/articles/8461763-where-can-i-access-claude"
+  },
+  {
+    "date": "2026-09-29T13:50:54",
+    "title": "How up-to-date is Claude's training data?",
+    "level": "tool",
+    "summary": "Nima uchun sun'iy intellekt ba'zan kechagi voqeani bilmaydi? 👀\n\nDars tayyorlashda yoki uy ishlarida undan eng so'nggi ma'lumotni so'rasangiz, u adashishi mumkin",
+    "source_url": "https://support.claude.com/en/articles/8114494-how-up-to-date-is-claude-s-training-data"
   }
 ]

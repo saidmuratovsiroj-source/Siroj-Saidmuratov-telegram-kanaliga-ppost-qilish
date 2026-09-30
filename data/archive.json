@@ -47,5 +47,12 @@
     "level": "tool",
     "summary": "Nima uchun sun'iy intellekt ba'zan kechagi voqeani bilmaydi? 👀\n\nDars tayyorlashda yoki uy ishlarida undan eng so'nggi ma'lumotni so'rasangiz, u adashishi mumkin",
     "source_url": "https://support.claude.com/en/articles/8114494-how-up-to-date-is-claude-s-training-data"
+  },
+  {
+    "date": "2026-09-30T13:25:13",
+    "title": "Verify your phone number",
+    "level": "tool",
+    "summary": "Texnologiya bilan tanishishni boshladingizmi yoki yana qolib ketyapman deb o'ylayapsizmi? 🤯\n\nKo'pchilik obunachilarimdan Claude kabi aqlli yordamchilarni ishga ",
+    "source_url": "https://support.claude.com/en/articles/8287232-verify-your-phone-number"
   }
 ]

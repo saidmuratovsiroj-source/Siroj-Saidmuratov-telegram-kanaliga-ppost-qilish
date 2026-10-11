@@ -110,5 +110,12 @@
     "level": "tool",
     "summary": "Internetda kerakli ma'lumotni qidirish va shakllarni to'ldirishga ko'p vaqtingiz ketadimi? 👀\n\nClaude kompyuter dasturida yangi va qulay brauzer paydo bo'ldi. 💡\n",
     "source_url": "https://support.claude.com/en/articles/16607400-use-the-built-in-browser-in-claude-cowork"
+  },
+  {
+    "date": "2026-10-11T13:51:22",
+    "title": "Use live artifacts in Claude Cowork",
+    "level": "tool",
+    "summary": "Uy ishlaridan ortib, o'z loyihalaringizni tartibga solishga qiynalyapsizmi? 🔥\n\nClaude dasturida avval yaratgan hujjatlaringizni tahrirlashda muammoga duch keldi",
+    "source_url": "https://support.claude.com/en/articles/14729249-use-live-artifacts-in-claude-cowork"
   }
 ]
